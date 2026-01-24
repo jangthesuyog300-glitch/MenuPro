@@ -1,0 +1,45 @@
+.book-page {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+    color: #e5e7eb;
+  }
+  
+  .booking-form {
+    background: #0b1220;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+  }
+  
+  .booking-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #020617;
+    color: #fff;
+    border: 1px solid #334155;
+    border-radius: 8px;
+  }
+  
+  .booking-form button {
+    width: 100%;
+    padding: 12px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+  
+  .menu-section {
+    background: #020617;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+  

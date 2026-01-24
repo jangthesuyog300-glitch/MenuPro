@@ -1,0 +1,136 @@
+/* ===============================
+   RESTAURANT CARD (DARK RED THEME)
+   =============================== */
+
+   .restaurant-card {
+    width: 280px;
+    background-color: #000;
+    border: 1px solid #b30000;
+    border-radius: 10px;
+    overflow: hidden;
+  
+    /* BASE SHADOW */
+    box-shadow: 0 6px 15px rgba(255, 0, 0, 0.25);
+  
+    /* SMOOTH TRANSITION */
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    cursor: pointer;
+  
+    /* IMPORTANT FOR POP-OUT EFFECT */
+    position: relative;
+    z-index: 1;
+    will-change: transform;
+  }
+  
+  /* 🔥 POP-OUT + ENLARGE EFFECT */
+  .restaurant-card:hover {
+    transform: scale(1.08) translateY(-6px);
+    z-index: 10;
+  
+    /* STRONG DEPTH SHADOW */
+    box-shadow:
+      0 25px 50px rgba(255, 0, 0, 0.55),
+      0 0 30px rgba(255, 0, 0, 0.4);
+  }
+  
+  /* ===============================
+     IMAGE
+     =============================== */
+  
+  .restaurant-image {
+    position: relative;
+    height: 170px;
+    overflow: hidden;
+  }
+  
+  .restaurant-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+  }
+  
+  /* IMAGE ZOOM (SLIGHTLY MORE THAN CARD) */
+  .restaurant-card:hover .restaurant-image img {
+    transform: scale(1.12);
+  }
+  
+  /* ===============================
+     STATUS BADGE
+     =============================== */
+  
+  .status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+  }
+  
+  .status-badge.active {
+    background-color: #1aff1a;
+    color: #000;
+  }
+  
+  .status-badge.inactive {
+    background-color: #ff1a1a;
+    color: #000;
+  }
+  
+  /* ===============================
+     CONTENT
+     =============================== */
+  
+  .restaurant-content {
+    padding: 15px;
+  }
+  
+  .restaurant-name {
+    color: #ff1a1a;
+    margin: 0 0 6px;
+  }
+  
+  .restaurant-location {
+    color: #ccc;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  /* ===============================
+     FOOTER
+     =============================== */
+  
+  .restaurant-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .restaurant-rating {
+    color: #ffd700;
+    font-weight: bold;
+  }
+  
+  /* ===============================
+     BUTTON
+     =============================== */
+  
+  .view-btn {
+    background-color: transparent;
+    border: 1px solid #ff1a1a;
+    color: #ff1a1a;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  /* BUTTON HOVER */
+  .view-btn:hover {
+    background-color: #ff1a1a;
+    color: #000;
+    transform: scale(1.08);
+  }
+  
