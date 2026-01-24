@@ -1,0 +1,24 @@
+# ===== Visual Studio =====
+.vs/
+
+# ===== .NET build =====
+bin/
+obj/
+
+# ===== User-specific =====
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ===== Logs =====
+*.log
+
+# ===== React / Node =====
+node_modules/
+build/
+dist/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
