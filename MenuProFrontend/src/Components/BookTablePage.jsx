@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import "./BookTablePage.css";
+import { useState } from "react";
+import "../Styles/BookTablePage.css";
 
 export default function BookTablePage() {
   const { id } = useParams(); // 🔥 restaurant id
