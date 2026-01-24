@@ -1,0 +1,211 @@
+/* ================================
+   NAVBAR BASE
+================================ */
+.navbar {
+  background-color: #000 !important;   /* Black background */
+  border-bottom: 2px solid #b30000;     /* Red border */
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25); /* Red shadow */
+}
+
+/* ================================
+   BRAND
+================================ */
+.navbar-brand {
+  color: #ff1a1a !important;
+  font-weight: bold;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+}
+
+.navbar-brand:hover {
+  color: #ff4d4d !important;
+}
+
+/* ================================
+   NAV LINKS
+================================ */
+.navbar-nav .nav-link {
+  color: #ffffff !important;
+  margin: 0 8px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Hover border animation */
+.navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  left: 0;
+  bottom: -4px;
+  background-color: #ff1a1a;
+  transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ff1a1a !important;
+}
+
+/* Active link */
+.navbar-nav .nav-link.active {
+  color: #ff1a1a !important;
+  font-weight: 600;
+}
+
+/* ================================
+   DROPDOWN
+================================ */
+.dropdown-menu {
+  background-color: #111;
+  border: 1px solid #ff1a1a;
+  box-shadow: 0 6px 15px rgba(255, 0, 0, 0.3);
+}
+
+.dropdown-item {
+  color: #ffffff;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #ff1a1a;
+  color: #000;
+}
+
+/* Divider */
+.dropdown-divider {
+  border-color: #ff1a1a;
+}
+
+/* ================================
+   SEARCH BAR
+================================ */
+.form-control {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #ff1a1a;
+}
+
+.form-control::placeholder {
+  color: #aaa;
+}
+
+.form-control:focus {
+  background-color: #000;
+  color: #fff;
+  border-color: #ff4d4d;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+}
+
+/* Search Button */
+.btn-outline-success {
+  color: #ff1a1a;
+  border-color: #ff1a1a;
+}
+
+.btn-outline-success:hover {
+  background-color: #ff1a1a;
+  color: #000;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+}
+
+/* ================================
+   TOGGLER (MOBILE)
+================================ */
+.navbar-toggler {
+  border: 1px solid #ff1a1a;
+}
+
+.navbar-toggler-icon {
+  filter: invert(1);
+}
+
+/* ================================
+   DISABLED LINK
+================================ */
+.nav-link.disabled {
+  color: #777 !important;
+}
+
+
+/* flipping effect in the Register and login buttion */
+
+/* ================================
+   AUTH BUTTON FLIP EFFECT
+================================ */
+.auth-btn {
+  transition: transform 0.6s ease, background-color 0.4s ease;
+  transform-style: preserve-3d;
+}
+
+.auth-btn.register {
+  transform: rotateY(180deg);
+}
+
+/* ================================
+   AUTH BUTTON 3D FLIP (FIXED)
+================================ */
+/* ================================
+   AUTH BUTTON – TRUE 3D FLIP
+================================ */
+
+.auth-btn {
+  position: relative;
+  width: 110px;
+  height: 38px;
+
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+
+  perspective: 1000px; /* 🔥 REQUIRED */
+}
+
+/* INNER WRAPPER (THIS ROTATES) */
+.auth-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+/* FLIP */
+.auth-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+/* BOTH FACES */
+.auth-face {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+
+  backface-visibility: hidden; /* 🔥 CRITICAL */
+  border-radius: 6px;
+}
+
+/* FRONT (LOGIN) */
+.auth-front {
+  background-color: #dc3545; /* bootstrap danger */
+  transform: rotateY(0deg);
+}
+
+/* BACK (REGISTER) */
+.auth-back {
+  background-color: #0d6efd; /* bootstrap primary */
+  transform: rotateY(180deg);
+}

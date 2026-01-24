@@ -1,0 +1,138 @@
+/* PAGE */
+.restaurant-details-page {
+    padding: 20px 40px;
+    color: #e5e7eb;
+    background: #0b1220;
+  }
+  
+  /* HEADER */
+  .restaurant-header {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+  
+  .restaurant-header img {
+    width: 320px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
+  
+  .header-info h1 {
+    margin: 0;
+    font-size: 32px;
+  }
+  
+  .header-info p {
+    margin: 8px 0;
+    color: #cbd5f5;
+  }
+  
+  .rating {
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: bold;
+  }
+  
+  /* ACTION BUTTONS */
+  .action-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .action-buttons button {
+    background: rgba(30, 58, 138, 0.3);
+    border: 1px solid #1e3a8a;
+    color: #93c5fd;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .action-buttons button:hover {
+    background: #1e3a8a;
+  }
+  
+  /* TABS */
+  .tabs-bar {
+    position: sticky;
+    top: 0;
+    background: #0b1220;
+    display: flex;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #1e3a8a;
+    z-index: 10;
+  }
+  
+  .tabs-bar button {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-weight: 500;
+    cursor: pointer;
+    padding-bottom: 6px;
+  }
+  
+  .tabs-bar button.active {
+    color: #60a5fa;
+    border-bottom: 2px solid #60a5fa;
+  }
+  
+  /* BODY */
+  .restaurant-body {
+    display: flex;
+    gap: 40px;
+    margin-top: 30px;
+  }
+  
+  /* LEFT */
+  .left-content {
+    flex: 3;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  /* RIGHT SIDEBAR */
+  .booking-sidebar {
+    flex: 1;
+    height: fit-content;
+    position: sticky;
+    top: 90px;
+    background: rgba(15, 23, 42, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  
+  .booking-sidebar h3 {
+    margin-top: 0;
+  }
+  
+  .book-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 10px;
+    color: #0b1220;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .book-btn:hover {
+    background: #2563eb;
+  }
+  
+  /* LOADING */
+  .loading {
+    padding: 40px;
+    text-align: center;
+  }
+  
