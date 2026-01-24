@@ -1,8 +1,9 @@
-using System.Diagnostics;
+using Hotel.Models;
 using MenuPro.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
-namespace MenuPro.Controllers
+namespace Hotel.Controllers
 {
     public class HomeController : Controller
     {
