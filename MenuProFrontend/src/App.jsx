@@ -31,36 +31,30 @@
 //     </>
 //   )
 // }
-
 // export default App
-import { Routes, Route } from "react-router-dom";
 
-import Homepage from "./Homepage/Homepage.jsx";
-import Navbar from "./Homepage/Navbar.jsx";
-import Footer from "./Homepage/Footer.jsx";
-import RestaurantDetails from "./Homepage/CardForHotels/RestaurantDetails/RestaurantDetails.jsx";
-import BookTablePage from "./Homepage/CardForHotels/RestaurantDetails/BookTablePage.jsx";
+
+import { Routes, Route } from "react-router-dom";
+import Homepage from "./HeroSection/Homepage.jsx";
+import Navbar from "./HeroSection/Navbar.jsx";
+import Footer from "./HeroSection/Footer.jsx";
+import RestaurantDetails from "./HeroSection/RestaurantDetails.jsx";
+import BookTablePage from "./Components/BookTablePage.jsx";
 import './StylesH/App1.css';
 
-export default function App(){
-    return(<>
+export default function App() {
+  return (<>
     <div className="app-container">
       <Navbar />
-
-      {/* <main className="content">
-        <Homepage />
-      </main> */}
-    <main className="content">
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/restaurant/:id" element={<RestaurantDetails />} />
-        <Route path="/restaurant/:id/book" element={<BookTablePage />} />
-      </Routes>
+      <main className="content">
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/restaurant/:id" element={<RestaurantDetails />} />
+          <Route path="/restaurant/:id/book" element={<BookTablePage />} />
+        </Routes>
       </main>
-
-
       <Footer />
     </div>
-    
-    </>)
+
+  </>)
 } 

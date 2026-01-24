@@ -38,7 +38,7 @@
   
 
 
-import './Photos.css';
+import '../Styles/Photos.css';
 
 export default function Photos({ photos }) {
 

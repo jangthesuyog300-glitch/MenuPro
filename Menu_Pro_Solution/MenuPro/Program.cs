@@ -26,17 +26,29 @@ namespace Hotel
 
 
             // Add CORS policy
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowReactApp",
+            //        policy => policy
+            //            .WithOrigins("http://localhost:3000")
+            //            .AllowAnyHeader()
+            //            .AllowAnyMethod());
+            //});
+
+
+
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowReactApp",
-                    policy => policy
-                        .WithOrigins("http://localhost:3000")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod());
+                options.AddPolicy("AllowReact",
+                    policy =>
+                    {
+                        policy
+                            .WithOrigins("http://localhost:5173")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
             });
-
-
-
 
             // 🔹 ADD JWT AUTHENTICATION CONFIG
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -104,7 +116,9 @@ namespace Hotel
 
 
             // Use CORS
-            app.UseCors("AllowReactApp");
+            //app.UseCors("AllowReactApp");
+
+            app.UseCors("AllowReact");
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

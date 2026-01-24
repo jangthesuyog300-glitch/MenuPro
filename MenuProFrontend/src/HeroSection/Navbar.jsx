@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./Styles/Navbar.css";
-import LoginModal from "./Login_Register/Login";
-import RegisterModal from "./Login_Register/Register";
+import "../Styles/Navbar.css";
+import LoginModal from "../HeroSection/Login";
+import RegisterModal from "../HeroSection/Register";
 
 export default function Navbar() {
 
