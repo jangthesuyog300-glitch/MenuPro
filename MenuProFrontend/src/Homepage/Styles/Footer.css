@@ -1,0 +1,83 @@
+/* ================================
+   FOOTER BASE
+================================ */
+.footer {
+    background-color: #000;
+    color: #fff;
+    border-top: 2px solid #b30000;
+    box-shadow: 0 -4px 12px rgba(255, 0, 0, 0.3);
+  
+    /* 🔽 REMOVE EXTRA GAP */
+    margin-top: 0;
+  }
+  
+  /* ================================
+     FOOTER CONTAINER
+  ================================ */
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  
+    /* 🔽 REDUCED PADDING */
+    padding: 25px 50px;
+    flex-wrap: wrap;
+  }
+  
+  /* ================================
+     FOOTER SECTIONS
+  ================================ */
+  .footer-section {
+    max-width: 280px;
+  
+    /* 🔽 REDUCED SPACING */
+    margin-bottom: 10px;
+  }
+  
+  .footer-title {
+    color: #ff1a1a;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .footer-text {
+    color: #ccc;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  /* ================================
+     FOOTER LINKS
+  ================================ */
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-links li {
+    color: #fff;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+  
+  .footer-links li:hover {
+    color: #ff1a1a;
+    padding-left: 4px;
+  }
+  
+  /* ================================
+     FOOTER BOTTOM
+  ================================ */
+  .footer-bottom {
+    text-align: center;
+  
+    /* 🔽 REDUCED HEIGHT */
+    padding: 10px;
+    border-top: 1px solid #b30000;
+    font-size: 12px;
+    color: #aaa;
+  }
+  
