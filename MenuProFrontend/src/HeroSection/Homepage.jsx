@@ -34,9 +34,10 @@ export default function Homepage() {
   // Render list of restaurants using reusable RestaurantCard component
   return (
     <div className="homepage-container">
+      
       {restaurants.map(r => (
         <RestaurantCard
-          key={r.restaurantId}   // Unique key for React list rendering
+          key={r.restaurantId} // Unique key for React list rendering
           name={r.name}          // Restaurant name
           location={r.location}  // Restaurant location
           rating={r.rating}      // Rating value

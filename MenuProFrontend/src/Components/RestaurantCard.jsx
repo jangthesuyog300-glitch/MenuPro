@@ -1,14 +1,22 @@
 import "../Styles/Card.css";
+import { useNavigate } from "react-router-dom";
 
 export default function RestaurantCard({
+  id,
   name,
   location,
   rating,
   isActive,
   imagePath
 }) {
+  const navigate = useNavigate();
+
   return (
-    <div className="restaurant-card">
+    <div
+      className="restaurant-card"
+      onClick={() => navigate(`/restaurant/${id}`)}
+      style={{ cursor: "pointer" }}
+    >
 
       {/* IMAGE */}
       <div className="restaurant-image">
@@ -31,7 +39,6 @@ export default function RestaurantCard({
           <span className="restaurant-rating">⭐ {rating}</span>
         </div>
       </div>
-
     </div>
   );
 }
