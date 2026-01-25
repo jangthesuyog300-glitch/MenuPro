@@ -1,0 +1,27 @@
+/* Homepage container */
+.homepage-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+  background-color: var(--color-bg);
+}
+
+/* Loading text */
+.loading-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  padding: var(--space-xl);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  font-family: var(--font-family-base);
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .homepage-container {
+    justify-content: center;
+    padding: var(--space-lg);
+  }
+}
