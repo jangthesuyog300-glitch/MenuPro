@@ -33,58 +33,55 @@
 // }
 // export default App
 
+import { Routes, Route } from "react-router-dom";
 
-import { Route, Routes } from "react-router-dom";
-import BookTablePage from "./Components/BookTablePage.jsx";
+import Navbar from "./HeroSection/Navbar.jsx";
 import Footer from "./HeroSection/Footer.jsx";
 import Homepage from "./HeroSection/Homepage.jsx";
-import Navbar from "./HeroSection/Navbar.jsx";
 import RestaurantDetails from "./HeroSection/RestaurantDetails.jsx";
-import './StylesH/App1.css';
+import BookTablePage from "./HeroSection/BookTablePage.jsx";
 
-import Bookings from "./Components/manager/Bookings";
-import Dashboard from "./Components/manager/Dashboard";
-import FoodMenu from "./Components/manager/FoodMenu";
 import ManagerLayout from "./Components/manager/ManagerLayout.jsx";
+import Dashboard from "./Components/manager/Dashboard.jsx";
+import MyRestaurant from "./Components/manager/MyRestaurant.jsx";
+import FoodMenu from "./Components/manager/FoodMenu.jsx";
+import Tables from "./Components/manager/Tables.jsx";
+import Bookings from "./Components/manager/Bookings.jsx";
+import Payments from "./Components/manager/Payments.jsx";
 
-import MyRestaurant from "./Components/manager/MyRestaurant";
-import Payments from "./Components/manager/Payments";
-import Tables from "./Components/manager/Tables";
+import "./StylesH/App1.css";
 
 export default function App() {
-  return (<>
+  return (
     <div className="app-container">
+
       <Navbar />
+
       <main className="content">
         <Routes>
 
-
-        {/* Manager Routes */}
-        <Route
-          path="/manager/*"
-          element={
-            <ManagerLayout>
-              <Routes>
-                <Route path="" element={<Dashboard />} />
-                <Route path="restaurant" element={<MyRestaurant />} />
-                <Route path="food" element={<FoodMenu />} />
-                <Route path="tables" element={<Tables />} />
-                <Route path="bookings" element={<Bookings />} />
-                <Route path="payments" element={<Payments />} />
-              </Routes>
-            </ManagerLayout>
-          }
-        />
-
-
+          {/* ================= PUBLIC ROUTES ================= */}
           <Route path="/" element={<Homepage />} />
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/restaurant/:id/book" element={<BookTablePage />} />
 
+          {/* ================= MANAGER ROUTES ================= */}
+          <Route path="/manager" element={<ManagerLayout />}>
+
+            <Route index element={<Dashboard />} />
+            <Route path="restaurant" element={<MyRestaurant />} />
+            <Route path="food" element={<FoodMenu />} />
+            <Route path="tables" element={<Tables />} />
+            <Route path="bookings" element={<Bookings />} />
+            <Route path="payments" element={<Payments />} />
+
+          </Route>
+
         </Routes>
       </main>
-      <Footer />
-    </div>
 
-  </>)
-} 
+      <Footer />
+
+    </div>
+  );
+}
