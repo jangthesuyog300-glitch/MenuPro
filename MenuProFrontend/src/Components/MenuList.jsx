@@ -1,6 +1,6 @@
 import MenuCard from "./MenuCard";
 
-export default function MenuList({ menu }) {
+export default function MenuList({ menu, onAddToCart }) {
 
   if (!menu || menu.length === 0) {
     return <p>No menu available.</p>;
@@ -15,13 +15,14 @@ export default function MenuList({ menu }) {
           price: item.price,
           isAvailable: item.isAvailable,
           imageUrl: item.imageUrl || "/images/default-food.jpg",
-          isVeg: true // adjust later if backend supports it
+          isVeg: true
         };
 
         return (
           <MenuCard
             key={mappedItem.id}
             item={mappedItem}
+            onAdd={() => onAddToCart(mappedItem)}
           />
         );
       })}
