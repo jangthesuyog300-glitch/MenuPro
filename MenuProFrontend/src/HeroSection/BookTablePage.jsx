@@ -1,10 +1,43 @@
+
+
+
+
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import BookTableForm from "../Components/Booking/BookingForm";
+import MenuList from "../Components/MenuList";
 import "../Styles/BookTablePage.css";
+
+// adding the Service to import the data 
+import { getMenuByRestaurant } from "../services/menuService";
+
+
 
 export default function BookTablePage() {
   const { id } = useParams();
+
+  if (!id) {
+    return <h1 style={{ color: "red" }}>Restaurant ID missing in URL</h1>;
+  }
   const navigate = useNavigate();
+
+  const [menu, setMenu] = useState([]);
+
+    useEffect(() => {
+      // Temporary Printing the Id
+      console.log("Restaurant ID from URL:", id);
+      const fetchMenu = async () => {
+        try {
+          const data = await getMenuByRestaurant(id);
+          setMenu(data);
+        } catch (error) {
+          console.error("Failed to fetch menu:", error);
+        }
+      };
+    
+      fetchMenu();
+    }, [id]);
+  
 
   const handleBooking = (bookingData) => {
     const ok = window.confirm(
@@ -20,30 +53,19 @@ From ${bookingData.startTime} to ${bookingData.endTime}?`
       ...bookingData,
     });
 
-    // 🔁 BACKEND (future)
-    /*
-    fetch("/api/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ restaurantId: id, ...bookingData })
-    })
-    .then(res => res.json())
-    .then(data => navigate(`/payment/${data.bookingId}`));
-    */
-
     navigate("/payment/TEMP123");
   };
 
   return (
     <div className="book-table-page">
 
-      {/* LEFT SIDE */}
+      {/* LEFT SIDE MENU */}
       <div className="menu-section">
         <h2>Menu</h2>
-        <p>Select menu after confirming booking.</p>
+        <MenuList menu={menu} />
       </div>
 
-      {/* RIGHT SIDE */}
+      {/* RIGHT SIDE BOOKING */}
       <div className="booking-section">
         <BookTableForm onBook={handleBooking} />
       </div>

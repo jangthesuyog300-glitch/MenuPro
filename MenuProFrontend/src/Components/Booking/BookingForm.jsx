@@ -5,6 +5,7 @@ export default function BookTableForm({ onBook }) {
   const today = new Date().toISOString().split("T")[0];
 
   const [people, setPeople] = useState(2);
+  const [customPeople, setCustomPeople] = useState("");
   const [date, setDate] = useState(today);
   const [startTime, setStartTime] = useState("12:00");
   const [endTime, setEndTime] = useState("13:00");
@@ -13,7 +14,7 @@ export default function BookTableForm({ onBook }) {
     e.preventDefault();
 
     onBook({
-      people,
+      people: people === "custom" ? customPeople : people,
       date,
       startTime,
       endTime,
@@ -31,20 +32,45 @@ export default function BookTableForm({ onBook }) {
 
       <form onSubmit={handleSubmit}>
 
-        {/* PEOPLE */}
+        {/* PEOPLE SELECTOR */}
         <label>Number of People</label>
-        <div className="people-selector">
-          {[1, 2, 3, 4, 5, 6].map((num) => (
-            <button
-              key={num}
-              type="button"
-              className={`people-btn ${people === num ? "active" : ""}`}
-              onClick={() => setPeople(num)}
-            >
-              {num === 6 ? "6+" : num}
-            </button>
-          ))}
+        <div className="people-scroll">
+
+          {[...Array(15)].map((_, i) => {
+            const num = i + 1;
+            return (
+              <button
+                key={num}
+                type="button"
+                className={`people-pill ${people === num ? "active" : ""}`}
+                onClick={() => setPeople(num)}
+              >
+                {num}
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            className={`people-pill ${people === "custom" ? "active" : ""}`}
+            onClick={() => setPeople("custom")}
+          >
+            15+
+          </button>
+
         </div>
+
+        {/* CUSTOM PEOPLE INPUT */}
+        {people === "custom" && (
+          <input
+            type="number"
+            min="16"
+            placeholder="Enter number of people"
+            value={customPeople}
+            onChange={(e) => setCustomPeople(e.target.value)}
+            required
+          />
+        )}
 
         {/* DATE */}
         <label>Date</label>
