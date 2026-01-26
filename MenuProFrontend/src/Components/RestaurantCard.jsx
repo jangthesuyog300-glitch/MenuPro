@@ -1,6 +1,5 @@
 import "../Styles/Card.css";
 import { useNavigate } from "react-router-dom";
-
 export default function RestaurantCard({
   id,
   name,
@@ -11,13 +10,20 @@ export default function RestaurantCard({
 }) {
   const navigate = useNavigate();
 
+  if (!id) {
+    console.error("❌ RestaurantCard rendered without id", {
+      name,
+      location
+    });
+    return null;
+  }
+
   return (
     <div
       className="restaurant-card"
       onClick={() => navigate(`/restaurant/${id}`)}
       style={{ cursor: "pointer" }}
     >
-
       {/* IMAGE */}
       <div className="restaurant-image">
         <img

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]  tempoorart commenting this part of the code for testing the authoriazation
     [ApiController]
     [Route("api/fooditems")]
     public class FoodItemsController : ControllerBase

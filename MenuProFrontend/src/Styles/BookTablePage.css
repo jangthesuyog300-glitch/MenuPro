@@ -104,3 +104,62 @@
 .book-form button:hover {
   background: #2563eb;
 }
+
+
+/* HORIZONTAL PEOPLE SCROLL */
+.people-scroll {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  padding-bottom: 6px;
+
+  overflow-x: auto;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE */
+}
+
+.people-scroll::-webkit-scrollbar {
+  display: none;                /* Chrome */
+}
+
+/* PEOPLE PILLS */
+/* HORIZONTAL SCROLL CONTAINER */
+.people-scroll {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  padding-bottom: 6px;
+
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.people-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* PEOPLE BUTTONS */
+.people-pill {
+  min-width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid #334155;
+  color: #e5e7eb;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+/* ACTIVE STATE ONLY */
+.people-pill.active {
+  background: #3b82f6;
+  color: #020617;
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(59,130,246,0.5);
+}

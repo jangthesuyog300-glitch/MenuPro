@@ -36,14 +36,16 @@ export default function Homepage() {
     <div className="homepage-container">
       
       {restaurants.map(r => (
-        <RestaurantCard
-          key={r.restaurantId} // Unique key for React list rendering
-          name={r.name}          // Restaurant name
-          location={r.location}  // Restaurant location
-          rating={r.rating}      // Rating value
-          isActive={r.isActive}  // Open / Closed status
-          imagePath={r.imagePath} // Image path from backend
-        />
+       <RestaurantCard
+       key={r.restaurantId}
+       id={r.restaurantId}          // ✅ THIS IS THE MISSING LINE
+       name={r.name}
+       location={r.location}
+       rating={r.rating}
+       isActive={r.isActive}
+       imagePath={r.imagePath}
+     />
+     
       ))}
     </div>
   );

@@ -137,7 +137,7 @@ import Overview from "../Components/Overview";
 import OrderOnline from "../Components/OrderOnline";
 import Reviews from "../Components/Reviews";
 import Photos from "../Components/Photos";
-import Menu from "../Components/Menu";
+import Menu from "../Components/MenuList";
 
 export default function RestaurantDetails() {
   const { id } = useParams();
