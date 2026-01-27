@@ -7,6 +7,7 @@ import RestaurantCard from "../Components/RestaurantCard";
 // Service function to fetch active restaurants from backend API
 import { getActiveRestaurants } from "../services/restaurantService";
 
+
 // Page-level styles (uses variables.css internally)
 import "../Styles/Homepage.css";
 
