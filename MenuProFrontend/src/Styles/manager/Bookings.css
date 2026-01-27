@@ -1,0 +1,117 @@
+/* Page Layout */
+.bookings-container {
+  padding: 30px;
+  color: #e5e7eb;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Headings */
+.bookings-container h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.bookings-container h2 {
+  margin-top: 50px;
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #f87171;
+}
+
+/* Common Table Design */
+.bookings-table,
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111827;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Table Header */
+.bookings-table thead,
+.log-table thead {
+  background: #1f2937;
+}
+
+.bookings-table th,
+.log-table th {
+  padding: 14px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9ca3af;
+}
+
+/* Table Rows */
+.bookings-table td,
+.log-table td {
+  padding: 12px;
+  text-align: center;
+  border-top: 1px solid #2d3748;
+  font-size: 14px;
+}
+
+/* Hover Effect */
+.bookings-table tbody tr:hover,
+.log-table tbody tr:hover {
+  background-color: #1f2937;
+  transition: 0.2s ease-in-out;
+}
+
+/* Status Colors */
+.pending {
+  color: #facc15;
+  font-weight: bold;
+}
+
+.confirmed {
+  color: #4ade80;
+  font-weight: bold;
+}
+
+.cancelled {
+  color: #f87171;
+  font-weight: bold;
+}
+
+/* Buttons */
+button {
+  padding: 6px 10px;
+  margin: 3px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+/* Confirm Button */
+button:nth-child(1) {
+  background-color: #16a34a;
+  color: white;
+}
+
+button:nth-child(1):hover {
+  background-color: #15803d;
+}
+
+/* Cancel Button */
+button:nth-child(2) {
+  background-color: #dc2626;
+  color: white;
+}
+
+button:nth-child(2):hover {
+  background-color: #b91c1c;
+}
+
+/* Empty log message */
+.log-table td[colspan] {
+  padding: 20px;
+  color: #9ca3af;
+}
