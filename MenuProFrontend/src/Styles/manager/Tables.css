@@ -1,0 +1,81 @@
+.tables-container {
+  padding: 30px;
+  color: #e5e7eb;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tables-container h1 {
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+/* Grid Layout */
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Table Card */
+.table-card {
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  background: #1f2937;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+  transition: 0.2s;
+}
+
+.table-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Status Colors */
+.table-card.available {
+  border: 2px solid #4ade80;
+}
+
+.table-card.occupied {
+  border: 2px solid #f87171;
+}
+
+.table-card.reserved {
+  border: 2px solid #facc15;
+}
+
+.status {
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Buttons */
+.actions button {
+  margin: 5px 3px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.actions button:nth-child(1) {
+  background: #16a34a;
+  color: white;
+}
+
+.actions button:nth-child(2) {
+  background: #eab308;
+  color: white;
+}
+
+.actions button:nth-child(3) {
+  background: #dc2626;
+  color: white;
+}
+
+.actions button:hover {
+  opacity: 0.9;
+}
