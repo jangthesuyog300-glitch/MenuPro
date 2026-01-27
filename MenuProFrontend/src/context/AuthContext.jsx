@@ -1,38 +1,41 @@
-// Context = “WHO is logged in + UI reaction”
-
 import { createContext, useContext, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { logoutUser } from "../services/authService";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // 🔁 AUTO LOGIN ON REFRESH
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      setUser({
-        id: decoded.sub,
-        email: decoded.email,
-        role: decoded.role,
-      });
+    const name = localStorage.getItem("name");
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("role");
+
+    if (token && name) {
+      setUser({ token, name, userId, role });
     }
   }, []);
 
-  const login = (token) => {
-    const decoded = jwtDecode(token);
+  const login = (data) => {
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("name", data.name);
+    localStorage.setItem("role", data.role);
+
+    if (data.restaurantId) {
+      localStorage.setItem("restaurantId", data.restaurantId);
+    }
+
     setUser({
-      id: decoded.sub,
-      email: decoded.email,
-      role: decoded.role,
+      token: data.token,
+      userId: data.userId,
+      name: data.name,
+      role: data.role,
     });
   };
 
   const logout = () => {
-    logoutUser();
+    localStorage.clear();
     setUser(null);
   };
 

@@ -17,6 +17,7 @@ import Payments from "./Components/manager/Payments.jsx";
 
 import Homepage from "./HeroSection/Homepage.jsx";
 import AboutUs from "./HeroSection/Aboutus.jsx";
+import BookingHistory from "./HeroSection/BookingHistory.jsx";
 
 
 import "./StylesH/App1.css";
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="payments" element={<Payments />} />
 
           </Route>
+          <Route path="/history" element={<BookingHistory />} />
 
         </Routes>
       </main>
