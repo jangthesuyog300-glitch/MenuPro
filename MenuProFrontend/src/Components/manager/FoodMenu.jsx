@@ -2,167 +2,253 @@ import { useState } from "react";
 import "../../Styles/manager/FoodMenu.css";
 
 export default function FoodMenu() {
-  const [categories, setCategories] = useState([
+  const [categories] = useState(["Starters", "Main Course"]);
+
+  // ✅ FOOD LIST WITH 2 DUMMY ITEMS (EXTENDED STRUCTURE)
+  const [foods, setFoods] = useState([
     {
       id: 1,
-      name: "Starters",
-      items: [
-        { id: 1, name: "Paneer Tikka", price: 220, available: true },
-        { id: 2, name: "Veg Manchurian", price: 180, available: true }
-      ]
+      category: "Starters",
+      name: "Paneer Tikka",
+      price: 220,
+      ingredients: "Paneer, Spices, Butter",
+      calories: 320,
+      carbs: 18,
+      protein: 20,
+      fat: 22,
+      type: "Veg",
+      spice: "Medium",
+      image: "",
+      description: "Grilled paneer cubes with spices",
+      available: true
     },
     {
       id: 2,
-      name: "Main Course",
-      items: [
-        { id: 3, name: "Butter Naan", price: 40, available: true },
-        { id: 4, name: "Paneer Butter Masala", price: 260, available: false }
-      ]
+      category: "Main Course",
+      name: "Paneer Butter Masala",
+      price: 260,
+      ingredients: "Paneer, Tomato, Butter, Cream",
+      calories: 420,
+      carbs: 30,
+      protein: 18,
+      fat: 28,
+      type: "Veg",
+      spice: "Mild",
+      image: "",
+      description: "Creamy tomato-based curry",
+      available: false
     }
   ]);
 
-  const addCategory = () => {
-    const name = prompt("Enter category name");
-    if (!name) return;
+  const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-    setCategories([
-      ...categories,
-      { id: Date.now(), name, items: [] }
-    ]);
+  const emptyForm = {
+    category: "",
+    name: "",
+    price: "",
+    ingredients: "",
+    calories: "",
+    carbs: "",
+    protein: "",
+    fat: "",
+    type: "Veg",
+    spice: "Medium",
+    image: "",
+    available: true,
+    description: ""
   };
 
-  const deleteCategory = (catId) => {
-    if (!window.confirm("Delete this category?")) return;
-    setCategories(categories.filter(c => c.id !== catId));
+  const [form, setForm] = useState(emptyForm);
+
+  // HANDLE INPUT
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm({
+      ...form,
+      [name]: type === "checkbox" ? checked : value
+    });
   };
 
-  const addItem = (catId) => {
-    const name = prompt("Food name?");
-    const price = prompt("Price?");
-    if (!name || !price) return;
+  // SAVE / UPDATE FOOD
+  const saveFood = () => {
+    if (!form.category || !form.name || !form.price) {
+      alert("Category, Food Name and Price are mandatory");
+      return;
+    }
 
-    setCategories(categories.map(c =>
-      c.id === catId
-        ? {
-            ...c,
-            items: [
-              ...c.items,
-              {
-                id: Date.now(),
-                name,
-                price,
-                available: true
-              }
-            ]
-          }
-        : c
-    ));
+    if (editId) {
+      setFoods(
+        foods.map((f) =>
+          f.id === editId ? { ...f, ...form } : f
+        )
+      );
+    } else {
+      setFoods([
+        ...foods,
+        { id: Date.now(), ...form }
+      ]);
+    }
+
+    resetForm();
   };
 
-  const toggleAvailability = (catId, itemId) => {
-    setCategories(categories.map(c =>
-      c.id === catId
-        ? {
-            ...c,
-            items: c.items.map(i =>
-              i.id === itemId
-                ? { ...i, available: !i.available }
-                : i
-            )
-          }
-        : c
-    ));
+  // DELETE FOOD
+  const deleteFood = (id) => {
+    if (!window.confirm("Delete this food item?")) return;
+    setFoods(foods.filter((f) => f.id !== id));
   };
 
-  const deleteItem = (catId, itemId) => {
-    if (!window.confirm("Delete this item?")) return;
-    setCategories(categories.map(c =>
-      c.id === catId
-        ? { ...c, items: c.items.filter(i => i.id !== itemId) }
-        : c
-    ));
+  // EDIT FOOD
+  const editFood = (food) => {
+    setForm(food);
+    setEditId(food.id);
+    setShowModal(true);
+  };
+
+  const resetForm = () => {
+    setShowModal(false);
+    setEditId(null);
+    setForm(emptyForm);
   };
 
   return (
     <div className="food-menu">
       <div className="food-header">
-        <h1>🍽️ Food Menu Management</h1>
-        <button className="primary-btn" onClick={addCategory}>
-          + Add Category
+        <h1>🍽 Food Menu Management</h1>
+        <button
+          className="primary-btn"
+          onClick={() => {
+            resetForm();
+            setShowModal(true);
+          }}
+        >
+          + Add Food Item
         </button>
       </div>
 
-      {categories.map(category => (
-        <div className="category-card" key={category.id}>
-          <div className="category-header">
-            <h2>{category.name}</h2>
-            <div>
-              <button
-                className="secondary-btn"
-                onClick={() => addItem(category.id)}
-              >
-                + Add Item
-              </button>
-              <button
-                className="danger-btn"
-                onClick={() => deleteCategory(category.id)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+      {/* FOOD LIST */}
+      <div className="menu-card">
+        <table className="food-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Food Name</th>
+              <th>Price (₹)</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {foods.map((food) => (
+              <tr key={food.id}>
+                <td>{food.category}</td>
+                <td>{food.name}</td>
+                <td>{food.price}</td>
+                <td>
+                  <span className={`status ${food.available ? "active" : "inactive"}`}>
+                    {food.available ? "Available" : "Out of Stock"}
+                  </span>
+                </td>
+                <td>
+                  <button className="secondary-btn" onClick={() => editFood(food)}>
+                    Update
+                  </button>
+                  <button className="danger-btn" onClick={() => deleteFood(food.id)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-          {category.items.length === 0 ? (
-            <p className="empty-text">No items added yet</p>
-          ) : (
-            <table className="food-table">
-              <thead>
-                <tr>
-                  <th>Food Name</th>
-                  <th>Price (₹)</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {category.items.map(item => (
-                  <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{item.price}</td>
-                    <td>
-                      <span
-                        className={
-                          item.available ? "status active" : "status inactive"
-                        }
-                      >
-                        {item.available ? "Available" : "Out of Stock"}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        className="secondary-btn"
-                        onClick={() =>
-                          toggleAvailability(category.id, item.id)
-                        }
-                      >
-                        Toggle
-                      </button>
-                      <button
-                        className="danger-btn"
-                        onClick={() =>
-                          deleteItem(category.id, item.id)
-                        }
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+      {/* MODAL */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-box large">
+            <button className="close-btn" onClick={resetForm}>✖</button>
+
+            <h2>{editId ? "Update Food Item" : "Add Food Item"}</h2>
+
+            <div className="form-group">
+              <label>Category *</label>
+              <select name="category" value={form.category} onChange={handleChange}>
+                <option value="">Select Category</option>
+                {categories.map((c, i) => (
+                  <option key={i}>{c}</option>
                 ))}
-              </tbody>
-            </table>
-          )}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Food Name *</label>
+              <input name="name" value={form.name} onChange={handleChange} />
+            </div>
+
+            <div className="form-group">
+              <label>Price (₹) *</label>
+              <input type="number" name="price" value={form.price} onChange={handleChange} />
+            </div>
+
+            <div className="form-group">
+              <label>Ingredients</label>
+              <input name="ingredients" value={form.ingredients} onChange={handleChange} />
+            </div>
+
+            {/* NUTRITION */}
+            <div className="nutrition">
+              <input placeholder="Calories" name="calories" value={form.calories} onChange={handleChange} />
+              <input placeholder="Carbs (g)" name="carbs" value={form.carbs} onChange={handleChange} />
+              <input placeholder="Protein (g)" name="protein" value={form.protein} onChange={handleChange} />
+              <input placeholder="Fat (g)" name="fat" value={form.fat} onChange={handleChange} />
+            </div>
+
+            <div className="form-group">
+              <label>Food Type</label>
+              <select name="type" value={form.type} onChange={handleChange}>
+                <option>Veg</option>
+                <option>Non-Veg</option>
+                <option>Vegan</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Spice Level</label>
+              <select name="spice" value={form.spice} onChange={handleChange}>
+                <option>Mild</option>
+                <option>Medium</option>
+                <option>Spicy</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Image URL</label>
+              <input name="image" value={form.image} onChange={handleChange} />
+            </div>
+
+            <div className="form-group">
+              <label>Description</label>
+              <textarea name="description" value={form.description} onChange={handleChange} />
+            </div>
+
+            <div className="checkbox">
+              <input
+                type="checkbox"
+                name="available"
+                checked={form.available}
+                onChange={handleChange}
+              />
+              <span>Available</span>
+            </div>
+
+            <button className="save-btn" onClick={saveFood}>
+              {editId ? "Update Food" : "Save Food"}
+            </button>
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
 }

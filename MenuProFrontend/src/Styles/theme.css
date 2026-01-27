@@ -1,0 +1,26 @@
+:root {
+  /* Brand Colors */
+  --primary: #e23744;          /* Main red (CTA, highlights) */
+  --primary-hover: #c91c2e;
+
+  --secondary: #1c1c1c;        /* Main text */
+  --secondary-light: #4f4f4f;
+
+  /* Backgrounds */
+  --bg-main: #fafafa;
+  --bg-card: #ffffff;
+  --bg-muted: #f2f2f2;
+
+  /* Status */
+  --success: #27ae60;
+  --warning: #f39c12;
+  --danger: #eb5757;
+
+  /* Borders & Shadows */
+  --border: #e5e5e5;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+}
