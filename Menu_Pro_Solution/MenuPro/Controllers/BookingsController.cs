@@ -20,12 +20,24 @@ namespace Hotel.Controllers
             await _context.SaveChangesAsync();
             return Ok(booking);
         }
-
+        [Authorize] // user must be logged in
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserBookings(int userId)
-            => Ok(await _context.Bookings
+        public async Task<IActionResult> GetBookingsByUser(int userId)
+        {
+            var bookings = await _context.Bookings
                 .Where(b => b.UserId == userId)
-                .Include(b => b.BookingFoods)
-                .ToListAsync());
+                .OrderByDescending(b => b.BookingDate)
+                .Select(b => new
+                {
+                    b.BookingId,
+                    b.BookingDate,
+                    b.BookingStatus,
+                    b.BookingAmount,
+                    b.RestaurantId
+                })
+                .ToListAsync();
+
+            return Ok(bookings);
+        }
     }
 }

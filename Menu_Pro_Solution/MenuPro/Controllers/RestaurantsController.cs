@@ -18,6 +18,9 @@ namespace Hotel.Controllers
             _env = env;
         }
 
+        // =========================================================
+        // 🟢 PUBLIC API – HOME PAGE (NO LOGIN REQUIRED)
+        // =========================================================
         [AllowAnonymous]
         [HttpGet("public")]
         public async Task<IActionResult> GetActiveRestaurants()
@@ -38,19 +41,62 @@ namespace Hotel.Controllers
             return Ok(restaurants);
         }
 
-        [Authorize(Roles = "User,Admin")]
+        // =========================================================
+        // 🟢 PUBLIC API – RESTAURANT DETAILS (NO LOGIN REQUIRED) ✅ FIX
+        // =========================================================
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRestaurantById(int id)
         {
             var restaurant = await _context.Restaurants
-                .Include(r => r.Tables)
-                .Include(r => r.FoodItems)
-                .FirstOrDefaultAsync(r => r.RestaurantId == id && r.IsActive);
+                .Where(r => r.RestaurantId == id && r.IsActive)
+                .Select(r => new
+                {
+                    r.RestaurantId,
+                    r.Name,
+                    r.Description,
+                    r.Location,
+                    r.City,
+                    r.Rating,
+                    r.TotalRatings,
+                    r.PriceForTwo,
+                    r.OpenTime,
+                    r.CloseTime,
+                    r.Phone,
+                    r.ImagePath,
 
-            if (restaurant == null) return NotFound("Restaurant not found");
+                    // ✅ No Restaurant navigation inside tables
+                    Tables = r.Tables.Select(t => new
+                    {
+                        t.TableId,
+                        t.RestaurantId,
+                        t.TableNumber,
+                        t.Capacity,
+                        t.Status
+                    }).ToList(),
+
+                    // ✅ No Restaurant navigation inside food items
+                    FoodItems = r.FoodItems.Select(f => new
+                    {
+                        f.FoodItemId,
+                        f.RestaurantId,
+                        f.FoodName,
+                        f.Price,
+                        f.IsAvailable
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (restaurant == null)
+                return NotFound("Restaurant not found");
+
             return Ok(restaurant);
         }
 
+
+        // =========================================================
+        // 🔴 ADMIN ONLY – CREATE RESTAURANT WITH IMAGE
+        // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateRestaurant([FromForm] Restaurant restaurant, IFormFile? image)
@@ -84,17 +130,26 @@ namespace Hotel.Controllers
             return Ok(restaurant);
         }
 
+        // =========================================================
+        // 🔴 ADMIN ONLY – GET ALL RESTAURANTS
+        // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllRestaurants()
-            => Ok(await _context.Restaurants.ToListAsync());
+        {
+            return Ok(await _context.Restaurants.ToListAsync());
+        }
 
+        // =========================================================
+        // 🔴 ADMIN ONLY – ACTIVATE / DEACTIVATE RESTAURANT
+        // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateRestaurantStatus(int id, bool isActive)
         {
             var restaurant = await _context.Restaurants.FindAsync(id);
-            if (restaurant == null) return NotFound("Restaurant not found");
+            if (restaurant == null)
+                return NotFound("Restaurant not found");
 
             restaurant.IsActive = isActive;
             await _context.SaveChangesAsync();

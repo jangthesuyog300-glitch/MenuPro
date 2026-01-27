@@ -6,8 +6,8 @@
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Password { get; set; }
+        public string? Role { get; set; } // "User" / "Admin" / "Manager"
 
-        // Expected values: "User" or "Admin"
-        public string? Role { get; set; }
+        public int? RestaurantId { get; set; } // ✅ for Manager/Admin
     }
 }

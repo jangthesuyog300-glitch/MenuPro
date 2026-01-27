@@ -10,6 +10,12 @@ namespace MenuPro.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<int>(
+                name: "RestaurantId",
+                table: "Users",
+                type: "int",
+                nullable: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "City",
                 table: "Restaurants",
@@ -58,6 +64,10 @@ namespace MenuPro.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "RestaurantId",
+                table: "Users");
+
             migrationBuilder.DropColumn(
                 name: "City",
                 table: "Restaurants");

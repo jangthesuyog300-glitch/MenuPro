@@ -9,8 +9,10 @@
         public string Phone { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
 
-        // IMPORTANT: Must match Authorize(Roles="User,Admin")
         public string Role { get; set; } = "User";
+
+        // ✅ For Manager/Admin accounts: which restaurant they manage
+        public int? RestaurantId { get; set; }
 
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }

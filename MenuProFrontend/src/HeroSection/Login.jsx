@@ -4,7 +4,6 @@ import { loginUser } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginModal({ isOpen, onClose, onRegisterClick }) {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,31 +15,28 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       const data = await loginUser(email, password);
-  
-      login(data.token);
-      onClose();
+
+      // ✅ SINGLE SOURCE OF TRUTH
+      login(data);
+
+      onClose(); // close modal
     } catch (err) {
-      console.log("Login error:", err);
-      setError("Unable to connect to server");
+      setError(err.response?.data || "Unable to connect to server");
     }
   };
 
   return (
     <div className="modal-overlay">
       <div className="login-modal">
-
-        {/* HEADER */}
         <div className="modal-header">
           <h3>Login</h3>
           <span className="close-btn" onClick={onClose}>×</span>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit}>
-
           {error && <p className="error-text">{error}</p>}
 
           <input
@@ -62,22 +58,16 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick }) {
           <button type="submit" className="login-btn">
             Login
           </button>
-
         </form>
 
-        {/* FOOTER */}
         <div className="modal-footer">
           <p>
             <b>Don’t have an account?</b>{" "}
-            <span
-              className="register-link"
-              onClick={onRegisterClick}
-            >
+            <span className="register-link" onClick={onRegisterClick}>
               Register
             </span>
           </p>
         </div>
-
       </div>
     </div>
   );
