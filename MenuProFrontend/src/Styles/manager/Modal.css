@@ -1,0 +1,139 @@
+/* ===============================
+   THEME VARIABLES (LOCKED)
+   =============================== */
+/* :root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(255, 178, 71, 0.45);
+} */
+
+/* ===============================
+   OVERLAY  ✅ FIXED
+   =============================== */
+/* .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 30, 30, 0.65);
+
+  display: flex;
+  align-items: center;
+  justify-content: center; */
+
+  /* 🔥 MOST IMPORTANT FIX */
+  /* z-index: 10000; */
+
+  /* 🔥 ENSURE CLICKS WORK */
+  /* pointer-events: all; */
+
+  /* 🔥 AVOID PARENT STACKING CONTEXT */
+  /* isolation: isolate; */
+/* } */
+
+/* ===============================
+   MODAL  ✅ FIXED
+   =============================== */
+/* .modal {
+  background: var(--bg-panel);
+  padding: 25px;
+  border-radius: 14px;
+  width: 320px;
+  position: relative;
+
+  color: var(--text-normal);
+  box-shadow: var(--shadow-soft);
+
+  animation: pop 0.25s ease;
+
+
+  pointer-events: all;
+} */
+
+/* ===============================
+   POP ANIMATION
+   =============================== */
+/* @keyframes pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+} */
+
+/* ===============================
+   TITLE
+   =============================== */
+/* .modal h2 {
+  margin-bottom: 15px;
+  color: var(--text-primary);
+} */
+
+/* ===============================
+   INPUT
+   =============================== */
+/* .modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  background: var(--bg-page);
+
+  color: var(--text-normal);
+}
+
+.modal input::placeholder {
+  color: var(--text-muted);
+}
+
+.modal input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
+} */
+
+/* ===============================
+   CLOSE BUTTON
+   =============================== */
+/* .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+
+  color: var(--text-muted);
+  z-index: 99;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+} */
+
+/* ===============================
+   FULL WIDTH
+   =============================== */
+/* .full {
+  width: 100%;
+} */
+
+
+
+
+

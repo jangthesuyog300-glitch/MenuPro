@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MenuPro.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260127124901_InitialHotelSchema")]
+    [Migration("20260127152153_InitialHotelSchema")]
     partial class InitialHotelSchema
     {
         /// <inheritdoc />
@@ -278,6 +278,9 @@ namespace MenuPro.Migrations
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RestaurantId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Role")
                         .IsRequired()

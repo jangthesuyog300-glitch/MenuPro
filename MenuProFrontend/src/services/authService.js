@@ -2,16 +2,14 @@ import axios from "./axios";
 
 // 🔐 LOGIN
 export const loginUser = async (email, password) => {
-  const response = await axios.post("/auth/login", {
+  const res = await axiosInstance.post("/auth/login", {
     email,
     password,
   });
-
-  // Save JWT token
-  localStorage.setItem("token", response.data.token);
-
-  return response.data;
+  return res.data; // { token, userId, name, role, restaurantId }
 };
+ 
+
 
 // 📝 REGISTER
 export const registerUser = async (userData) => {

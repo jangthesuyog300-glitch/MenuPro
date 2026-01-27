@@ -2,29 +2,59 @@ import { useState } from "react";
 import "../Styles/Login.css";
 import { loginUser } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-export default function LoginModal({ isOpen, onClose, onRegisterClick }) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+  onRegisterClick,
+  onLoginSuccess,
+}) {
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
-
+  // 🚫 Do not render if closed
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+    setLoading(true);
+
     try {
       const data = await loginUser(email, password);
-  
+
+      if (!data || !data.token) {
+        throw new Error("Token missing");
+      }
+
+      // ✅ Save auth info
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+
+      // ✅ Update AuthContext (expects TOKEN)
       login(data.token);
+
+      // ✅ Notify Navbar + close modal
+      onLoginSuccess();
       onClose();
+
+      // ✅ Redirect by role
+      if (data.role === "Manager") {
+        navigate("/manager");
+      } else {
+        navigate("/");
+      }
+
     } catch (err) {
-      console.log("Login error:", err);
-      setError("Unable to connect to server");
+      setError("Invalid email or password");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,7 +70,6 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick }) {
 
         {/* FORM */}
         <form onSubmit={handleSubmit}>
-
           {error && <p className="error-text">{error}</p>}
 
           <input
@@ -49,6 +78,7 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
           />
 
           <input
@@ -57,22 +87,19 @@ export default function LoginModal({ isOpen, onClose, onRegisterClick }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
 
-          <button type="submit" className="login-btn">
-            Login
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
-
         </form>
 
         {/* FOOTER */}
         <div className="modal-footer">
           <p>
             <b>Don’t have an account?</b>{" "}
-            <span
-              className="register-link"
-              onClick={onRegisterClick}
-            >
+            <span className="register-link" onClick={onRegisterClick}>
               Register
             </span>
           </p>

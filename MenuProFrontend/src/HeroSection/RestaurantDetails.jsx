@@ -8,55 +8,72 @@ import Reviews from "../Components/Reviews";
 import Photos from "../Components/Photos";
 import Menu from "../Components/MenuList";
 
+import axiosInstance, { API_ORIGIN } from "../services/axiosInstance";
+
 export default function RestaurantDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [restaurant, setRestaurant] = useState(null);
+  const [menu, setMenu] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // ✅ HARDCODED DATA
-    const hardcodedRestaurant = {
-      restaurantId: id,
-      name: "Spice Villa",
-      description: "Authentic Indian cuisine with modern flavors",
-      location: "Pune, Maharashtra",
-      rating: 4.5,
-      imagePath: "images/spice-villa.jpg",
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-      menu: [
-        { id: 1, name: "Paneer Butter Masala", price: 250 },
-        { id: 2, name: "Butter Naan", price: 40 },
-      ],
+      const res = await axiosInstance.get(`/restaurants/${id}`);
+      const r = res.data;
 
-      reviews: [
-        { id: 1, user: "Rahul", comment: "Amazing food!", rating: 5 },
-        { id: 2, user: "Anita", comment: "Great ambiance", rating: 4 },
-      ],
+      const menuData = (r.foodItems || []).map((f) => ({
+        id: f.foodItemId,
+        name: f.foodName,
+        price: f.price,
+        isAvailable: f.isAvailable,
+      }));
 
-      photos: [
-        "images/food1.jpg",
-        "images/food2.jpg",
-      ]
-    };
+      setRestaurant({
+        restaurantId: r.restaurantId,
+        name: r.name,
+        description: r.description,
+        location: r.city ? `${r.location}, ${r.city}` : r.location,
+        rating: r.rating,
+        imagePath: r.imagePath,
+        menu: menuData,
+        reviews: [],
+        photos: [],
+      });
 
-    setRestaurant(hardcodedRestaurant);
-  }, [id]);
+      setMenu(menuData);
+    } catch (err) {
+      setError(err.response?.data || "Failed to load restaurant data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (!restaurant) {
-    return <p className="loading">Loading...</p>;
-  }
+  fetchData();
+}, [id]);
+
+
+  if (loading) return <p className="loading">Loading...</p>;
+  if (error) return <p className="loading">{error}</p>;
+  if (!restaurant) return <p className="loading">Restaurant not found.</p>;
+
+  // ✅ imagePath from backend is like "/images/restaurants/xxx.jpg"
+  const imageUrl = restaurant.imagePath
+    ? `${API_ORIGIN}${restaurant.imagePath}`
+    : "/images/default-restaurant.jpg";
 
   return (
     <div className="restaurant-details-page">
-
       {/* HEADER */}
       <div className="restaurant-header">
-        <img
-          src={`/${restaurant.imagePath}`}
-          alt={restaurant.name}
-        />
+        <img src={imageUrl} alt={restaurant.name} />
 
         <div className="header-info">
           <h1>{restaurant.name}</h1>
@@ -68,7 +85,9 @@ export default function RestaurantDetails() {
             <button
               onClick={() =>
                 window.open(
-                  `https://www.google.com/maps/search/?api=1&query=${restaurant.location}`,
+                  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                    restaurant.location
+                  )}`,
                   "_blank"
                 )
               }
@@ -90,16 +109,14 @@ export default function RestaurantDetails() {
               🔗 Share
             </button>
 
-            <button onClick={() => setActiveTab("reviews")}>
-              ⭐ Reviews
-            </button>
+            <button onClick={() => setActiveTab("reviews")}>⭐ Reviews</button>
           </div>
         </div>
       </div>
 
       {/* TABS */}
       <div className="tabs-bar">
-        {["overview", "order", "reviews", "photos", "menu"].map(tab => (
+        {["overview", "order", "reviews", "photos", "menu"].map((tab) => (
           <button
             key={tab}
             className={activeTab === tab ? "active" : ""}
@@ -112,13 +129,12 @@ export default function RestaurantDetails() {
 
       {/* BODY */}
       <div className="restaurant-body">
-
         <div className="left-content">
           {activeTab === "overview" && <Overview restaurant={restaurant} />}
-          {activeTab === "order" && <OrderOnline menu={restaurant.menu} />}
+          {activeTab === "order" && <OrderOnline menu={menu} />}
           {activeTab === "reviews" && <Reviews reviews={restaurant.reviews} />}
           {activeTab === "photos" && <Photos photos={restaurant.photos} />}
-          {activeTab === "menu" && <Menu menu={restaurant.menu} />}
+          {activeTab === "menu" && <Menu menu={menu} />}
         </div>
 
         {/* BOOKING */}
@@ -132,7 +148,6 @@ export default function RestaurantDetails() {
             Book a Table
           </button>
         </div>
-
       </div>
     </div>
   );

@@ -36,8 +36,16 @@ public class AuthController : ControllerBase
             return BadRequest("Email already exists");
 
         var role = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role.Trim();
-        if (role != "User" && role != "Admin")
-            return BadRequest("Role must be 'User' or 'Admin'");
+
+        if (role != "User" && role != "Manager" && role != "Admin")
+            return BadRequest("Role must be 'User', 'Manager' or 'Admin'");
+
+        // ✅ Manager/Admin must have RestaurantId
+        if (role == "Manager" || role == "Admin")
+        {
+            if (dto.RestaurantId == null)
+                return BadRequest("RestaurantId is required for Manager/Admin");
+        }
 
         var user = new User
         {
@@ -45,6 +53,7 @@ public class AuthController : ControllerBase
             Email = email,
             Phone = dto.Phone.Trim(),
             Role = role,
+            RestaurantId = dto.RestaurantId,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
         };
 
@@ -70,12 +79,14 @@ public class AuthController : ControllerBase
 
         var token = GenerateJwtToken(user);
 
+        // ✅ IMPORTANT: Return restaurantId here
         return Ok(new
         {
             token,
             userId = user.UserId,
             name = user.Name,
-            role = user.Role
+            role = user.Role,
+            restaurantId = user.RestaurantId
         });
     }
 
