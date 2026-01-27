@@ -1,0 +1,54 @@
+.admin-restaurants {
+  color: #e5e7eb;
+}
+
+.admin-restaurants h1 {
+  margin-bottom: 20px;
+}
+
+.restaurants-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111827;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+.restaurants-table th,
+.restaurants-table td {
+  padding: 12px;
+  border-top: 1px solid #2d3748;
+  text-align: center;
+}
+
+.restaurants-table thead {
+  background: #1f2937;
+  color: #9ca3af;
+}
+
+.restaurants-table tbody tr:hover {
+  background: #1f2937;
+}
+
+.active {
+  color: #4ade80;
+  font-weight: bold;
+}
+
+.inactive {
+  color: #f87171;
+  font-weight: bold;
+}
+
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  background: #2563eb;
+  color: white;
+}
+
+button:hover {
+  background: #1d4ed8;
+}

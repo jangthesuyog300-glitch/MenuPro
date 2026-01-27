@@ -1,0 +1,59 @@
+.admin-managers h1 {
+  margin-bottom: 20px;
+  color: #e5e7eb;
+}
+
+.managers-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.managers-table th,
+.managers-table td {
+  padding: 12px;
+  border-top: 1px solid #2d3748;
+  text-align: center;
+}
+
+.managers-table thead {
+  background: #1f2937;
+  color: #9ca3af;
+}
+
+.managers-table tbody tr:hover {
+  background: #1f2937;
+}
+
+.active {
+  color: #4ade80;
+  font-weight: bold;
+}
+
+.inactive {
+  color: #f87171;
+  font-weight: bold;
+}
+
+input {
+  padding: 5px;
+  width: 80px;
+  text-align: center;
+  border-radius: 4px;
+  border: none;
+}
+
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
