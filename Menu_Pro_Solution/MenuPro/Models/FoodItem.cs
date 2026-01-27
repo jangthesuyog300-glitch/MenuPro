@@ -9,9 +9,7 @@
         public decimal Price { get; set; }
         public bool IsAvailable { get; set; } = true;
 
-        // Navigation
         public Restaurant Restaurant { get; set; } = null!;
         public ICollection<BookingFood> BookingFoods { get; set; } = new List<BookingFood>();
     }
-
 }

@@ -1,11 +1,37 @@
+/* ===============================
+   THEME VARIABLES (LOCKED)
+   =============================== */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* ===============================
+   MANAGER LAYOUT
+   =============================== */
 .manager-layout {
   display: flex;
   height: 100vh;
+  background: var(--bg-page);
 }
 
+/* ===============================
+   MANAGER CONTENT
+   =============================== */
 .manager-content {
   flex: 1;
   padding: 30px;
-  background: #f4f6f8;
+  background: var(--bg-page);
   overflow-y: auto;
+  color: var(--text-normal);
 }

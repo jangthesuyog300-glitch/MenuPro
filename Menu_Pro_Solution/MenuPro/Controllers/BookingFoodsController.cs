@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User,Admin")]
     [ApiController]
     [Route("api/bookingfoods")]
     public class BookingFoodsController : ControllerBase
@@ -28,5 +28,4 @@ namespace Hotel.Controllers
                 .Include(bf => bf.FoodItem)
                 .ToListAsync());
     }
-
 }

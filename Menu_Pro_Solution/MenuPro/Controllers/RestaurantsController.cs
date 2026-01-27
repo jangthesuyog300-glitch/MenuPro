@@ -18,9 +18,6 @@ namespace Hotel.Controllers
             _env = env;
         }
 
-        // =========================================================
-        // 🟢 PUBLIC API – HOME PAGE (NO LOGIN REQUIRED)
-        // =========================================================
         [AllowAnonymous]
         [HttpGet("public")]
         public async Task<IActionResult> GetActiveRestaurants()
@@ -34,16 +31,13 @@ namespace Hotel.Controllers
                     r.Location,
                     r.Rating,
                     r.IsActive,
-                    r.ImagePath          // ✅ SEND IMAGE
+                    r.ImagePath
                 })
                 .ToListAsync();
 
             return Ok(restaurants);
         }
 
-        // =========================================================
-        // 🔵 USER + ADMIN – VIEW SINGLE RESTAURANT DETAILS
-        // =========================================================
         [Authorize(Roles = "User,Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRestaurantById(int id)
@@ -53,26 +47,18 @@ namespace Hotel.Controllers
                 .Include(r => r.FoodItems)
                 .FirstOrDefaultAsync(r => r.RestaurantId == id && r.IsActive);
 
-            if (restaurant == null)
-                return NotFound("Restaurant not found");
-
+            if (restaurant == null) return NotFound("Restaurant not found");
             return Ok(restaurant);
         }
 
-        // =========================================================
-        // 🔴 ADMIN ONLY – CREATE RESTAURANT WITH IMAGE
-        // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateRestaurant(
-            [FromForm] Restaurant restaurant,
-            IFormFile? image)
+        public async Task<IActionResult> CreateRestaurant([FromForm] Restaurant restaurant, IFormFile? image)
         {
-            // ✅ IMAGE UPLOAD
             if (image != null)
             {
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                var extension = Path.GetExtension(image.FileName).ToLower();
+                var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
 
                 if (!allowedExtensions.Contains(extension))
                     return BadRequest("Only JPG, JPEG, PNG allowed");
@@ -81,17 +67,13 @@ namespace Hotel.Controllers
                     return BadRequest("Image size must be less than 2MB");
 
                 var folderPath = Path.Combine(_env.WebRootPath, "images/restaurants");
-
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
+                if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
 
                 var fileName = Guid.NewGuid() + extension;
                 var filePath = Path.Combine(folderPath, fileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await image.CopyToAsync(stream);
-                }
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await image.CopyToAsync(stream);
 
                 restaurant.ImagePath = "/images/restaurants/" + fileName;
             }
@@ -102,36 +84,22 @@ namespace Hotel.Controllers
             return Ok(restaurant);
         }
 
-        // =========================================================
-        // 🔴 ADMIN ONLY – GET ALL RESTAURANTS
-        // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllRestaurants()
-        {
-            return Ok(await _context.Restaurants.ToListAsync());
-        }
+            => Ok(await _context.Restaurants.ToListAsync());
 
-        // =========================================================
-        // 🔴 ADMIN ONLY – ACTIVATE / DEACTIVATE RESTAURANT
-        // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateRestaurantStatus(int id, bool isActive)
         {
             var restaurant = await _context.Restaurants.FindAsync(id);
-            if (restaurant == null)
-                return NotFound("Restaurant not found");
+            if (restaurant == null) return NotFound("Restaurant not found");
 
             restaurant.IsActive = isActive;
             await _context.SaveChangesAsync();
 
-            return Ok(new
-            {
-                restaurant.RestaurantId,
-                restaurant.Name,
-                restaurant.IsActive
-            });
+            return Ok(new { restaurant.RestaurantId, restaurant.Name, restaurant.IsActive });
         }
     }
 }

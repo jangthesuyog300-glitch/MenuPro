@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/timeslots")]
     public class TimeSlotsController : ControllerBase
@@ -13,6 +12,7 @@ namespace Hotel.Controllers
         private readonly AppDbContext _context;
         public TimeSlotsController(AppDbContext context) => _context = context;
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Add(TimeSlot slot)
         {
@@ -21,9 +21,9 @@ namespace Hotel.Controllers
             return Ok(slot);
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
             => Ok(await _context.TimeSlots.ToListAsync());
     }
-
 }
