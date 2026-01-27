@@ -212,23 +212,40 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-            return BadRequest("Email already exists");
-
-        var user = new User
+        try
         {
-            Name = dto.Name,
-            Email = dto.Email,
-            Phone = dto.Phone,
-            Role = dto.Role,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password, 11)
-        };
+            if (string.IsNullOrWhiteSpace(dto.Name) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Password) ||
+                string.IsNullOrWhiteSpace(dto.Role))
+            {
+                return BadRequest("All fields are required");
+            }
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+                return BadRequest("Email already exists");
 
-        return Ok("User registered successfully");
+            var user = new User
+            {
+                Name = dto.Name,
+                Email = dto.Email,
+                Phone = dto.Phone,
+                Role = dto.Role,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok("User registered successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, "Internal server error");
+        }
     }
+
 
     // ✅ LOGIN
     [HttpPost("login")]
