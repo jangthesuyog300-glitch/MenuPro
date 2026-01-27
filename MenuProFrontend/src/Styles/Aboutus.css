@@ -1,32 +1,60 @@
+/* ===============================
+   THEME VARIABLES (LOCKED)
+   =============================== */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* ===============================
+   ABOUT PAGE
+   =============================== */
 .about-page {
-    padding: 40px;
-    max-width: 900px;
-    margin: auto;
-    color: #e5e7eb;
-  }
-  
-  .about-page h1 {
-    font-size: 36px;
-    margin-bottom: 10px;
-  }
-  
-  .tagline {
-    color: #9ca3af;
-    margin-bottom: 30px;
-  }
-  
-  .about-section {
-    margin-bottom: 30px;
-  }
-  
-  .about-section h2 {
-    color: #3b82f6;
-    margin-bottom: 8px;
-  }
-  
-  .about-section p,
-  .about-section li {
-    line-height: 1.6;
-    color: #d1d5db;
-  }
-  
+  padding: 40px;
+  max-width: 900px;
+  margin: auto;
+  color: var(--text-normal);
+  background: var(--bg-page);
+}
+
+/* MAIN HEADING */
+.about-page h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+/* TAGLINE */
+.tagline {
+  color: var(--text-muted);
+  margin-bottom: 30px;
+}
+
+/* SECTION */
+.about-section {
+  margin-bottom: 30px;
+}
+
+/* SECTION TITLE */
+.about-section h2 {
+  color: var(--accent-primary);
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+
+/* CONTENT */
+.about-section p,
+.about-section li {
+  line-height: 1.6;
+  color: var(--text-muted);
+}

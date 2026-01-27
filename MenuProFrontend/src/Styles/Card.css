@@ -1,136 +1,149 @@
 /* ===============================
-   RESTAURANT CARD (DARK RED THEME)
+   RESTAURANT CARD – THEME + STYLES
    =============================== */
 
-   .restaurant-card {
-    width: 280px;
-    background-color: #000;
-    border: 1px solid #b30000;
-    border-radius: 10px;
-    overflow: hidden;
-  
-    /* BASE SHADOW */
-    box-shadow: 0 6px 15px rgba(255, 0, 0, 0.25);
-  
-    /* SMOOTH TRANSITION */
-    transition: transform 0.35s ease, box-shadow 0.35s ease;
-    cursor: pointer;
-  
-    /* IMPORTANT FOR POP-OUT EFFECT */
-    position: relative;
-    z-index: 1;
-    will-change: transform;
-  }
-  
-  /* 🔥 POP-OUT + ENLARGE EFFECT */
-  .restaurant-card:hover {
-    transform: scale(1.08) translateY(-6px);
-    z-index: 10;
-  
-    /* STRONG DEPTH SHADOW */
-    box-shadow:
-      0 25px 50px rgba(255, 0, 0, 0.55),
-      0 0 30px rgba(255, 0, 0, 0.4);
-  }
-  
-  /* ===============================
-     IMAGE
-     =============================== */
-  
-  .restaurant-image {
-    position: relative;
-    height: 170px;
-    overflow: hidden;
-  }
-  
-  .restaurant-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.45s ease;
-  }
-  
-  /* IMAGE ZOOM (SLIGHTLY MORE THAN CARD) */
-  .restaurant-card:hover .restaurant-image img {
-    transform: scale(1.12);
-  }
-  
-  /* ===============================
-     STATUS BADGE
-     =============================== */
-  
-  .status-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 4px 10px;
-    font-size: 12px;
-    border-radius: 12px;
-    font-weight: bold;
-  }
-  
-  .status-badge.active {
-    background-color: #1aff1a;
-    color: #000;
-  }
-  
-  .status-badge.inactive {
-    background-color: #ff1a1a;
-    color: #000;
-  }
-  
-  /* ===============================
-     CONTENT
-     =============================== */
-  
-  .restaurant-content {
-    padding: 15px;
-  }
-  
-  .restaurant-name {
-    color: #ff1a1a;
-    margin: 0 0 6px;
-  }
-  
-  .restaurant-location {
-    color: #ccc;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-  
-  /* ===============================
-     FOOTER
-     =============================== */
-  
-  .restaurant-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .restaurant-rating {
-    color: #ffd700;
-    font-weight: bold;
-  }
-  
-  /* ===============================
-     BUTTON
-     =============================== */
-  
-  .view-btn {
-    background-color: transparent;
-    border: 1px solid #ff1a1a;
-    color: #ff1a1a;
-    padding: 4px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-  }
-  
-  /* BUTTON HOVER */
-  .view-btn:hover {
-    background-color: #ff1a1a;
-    color: #000;
-    transform: scale(1.08);
-  }
-  
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(255, 178, 71, 0.45);
+}
+
+/* ===============================
+   CARD
+   =============================== */
+
+.restaurant-card {
+  width: 280px;
+  background: var(--bg-panel);
+  border-radius: 16px;
+  overflow: hidden;
+
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  cursor: pointer;
+
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+}
+
+/* 🔥 POP-OUT EFFECT */
+.restaurant-card:hover {
+  transform: scale(1.06) translateY(-8px);
+  z-index: 10;
+  box-shadow: var(--shadow-glow);
+}
+
+/* ===============================
+   IMAGE
+   =============================== */
+
+.restaurant-image {
+  position: relative;
+  height: 170px;
+  overflow: hidden;
+}
+
+.restaurant-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.restaurant-card:hover .restaurant-image img {
+  transform: scale(1.1);
+}
+
+/* ===============================
+   STATUS BADGE
+   =============================== */
+
+.status-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  color: #1a0f0f;
+}
+
+.status-badge.active {
+  background: var(--accent-rating);
+}
+
+.status-badge.inactive {
+  background: var(--accent-primary);
+}
+
+/* ===============================
+   CONTENT
+   =============================== */
+
+.restaurant-content {
+  padding: 16px;
+}
+
+.restaurant-name {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.restaurant-location {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* ===============================
+   FOOTER
+   =============================== */
+
+.restaurant-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.restaurant-rating {
+  color: var(--accent-rating);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ===============================
+   BUTTON
+   =============================== */
+
+.view-btn {
+  background: transparent;
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-btn:hover {
+  background: var(--accent-primary);
+  color: #1a0f0f;
+  transform: scale(1.06);
+  box-shadow: var(--shadow-glow);
+}
