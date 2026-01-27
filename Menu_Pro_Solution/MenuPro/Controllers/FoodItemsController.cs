@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Controllers
 {
-    //[Authorize(Roles = "Admin")]  tempoorart commenting this part of the code for testing the authoriazation
     [ApiController]
     [Route("api/fooditems")]
     public class FoodItemsController : ControllerBase
@@ -13,6 +12,7 @@ namespace Hotel.Controllers
         private readonly AppDbContext _context;
         public FoodItemsController(AppDbContext context) => _context = context;
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Add(FoodItem food)
         {
@@ -21,11 +21,11 @@ namespace Hotel.Controllers
             return Ok(food);
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("restaurant/{restaurantId}")]
         public async Task<IActionResult> GetByRestaurant(int restaurantId)
             => Ok(await _context.FoodItems
                 .Where(f => f.RestaurantId == restaurantId && f.IsAvailable)
                 .ToListAsync());
     }
-
 }

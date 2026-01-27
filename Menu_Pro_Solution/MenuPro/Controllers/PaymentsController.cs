@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User,Admin")]
     [ApiController]
     [Route("api/payments")]
     public class PaymentsController : ControllerBase
@@ -17,7 +17,7 @@ namespace Hotel.Controllers
         public async Task<IActionResult> Pay(Payment payment)
         {
             payment.PaymentStatus = "Success";
-            payment.PaymentDate = DateTime.Now;
+            payment.PaymentDate = DateTime.UtcNow;
 
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
@@ -30,5 +30,4 @@ namespace Hotel.Controllers
                 .Where(p => p.BookingId == bookingId)
                 .ToListAsync());
     }
-
 }

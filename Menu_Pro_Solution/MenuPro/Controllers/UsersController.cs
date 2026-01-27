@@ -1,4 +1,5 @@
 ﻿using Hotel.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,17 +12,13 @@ namespace Hotel.Controllers
         private readonly AppDbContext _context;
         public UsersController(AppDbContext context) => _context = context;
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(User user)
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return Ok(user);
-        }
+        // IMPORTANT:
+        // Do NOT expose a second "register" here because it would bypass hashing.
+        // Registration should ONLY happen via /api/auth/register.
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
-            => Ok(await _context.Users.ToListAsync());
+            => Ok(await _context.Users.AsNoTracking().ToListAsync());
     }
-
 }

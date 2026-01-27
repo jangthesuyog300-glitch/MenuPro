@@ -13,30 +13,25 @@ namespace Hotel
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // 🔹 Add DbContext
+            // DbContext
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
-                )
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
             );
 
-            // 🔹 Add Controllers
             builder.Services.AddControllers();
 
-            // 🔹 ADD CORS POLICY (FRONTEND: VITE)
+            // CORS (Vite)
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowReact",
-                    policy =>
-                    {
-                        policy
-                            .WithOrigins("http://localhost:5173")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
+                options.AddPolicy("AllowReact", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
             });
 
-            // 🔹 ADD JWT AUTHENTICATION
+            // JWT Auth
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -46,26 +41,23 @@ namespace Hotel
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.FromSeconds(30),
 
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key missing"))
                         )
                     };
                 });
 
-            // 🔹 ADD AUTHORIZATION
             builder.Services.AddAuthorization();
 
-            // 🔹 SWAGGER + JWT
+            // Swagger + JWT
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Hotel API",
-                    Version = "v1"
-                });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -81,22 +73,15 @@ namespace Hotel
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
                         },
-                        new string[] {}
+                        Array.Empty<string>()
                     }
                 });
             });
 
-            builder.Services.AddEndpointsApiExplorer();
-
             var app = builder.Build();
 
-            // 🔹 MIDDLEWARE PIPELINE (ORDER MATTERS)
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -104,17 +89,15 @@ namespace Hotel
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
-            // 🔥 CORS MUST BE HERE (BEFORE AUTH)
+            // CORS before auth
             app.UseCors("AllowReact");
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
-
             app.Run();
         }
     }

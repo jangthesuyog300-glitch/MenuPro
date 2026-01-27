@@ -6,12 +6,10 @@
 
         public int BookingId { get; set; }
         public decimal Amount { get; set; }
-        public string PaymentType { get; set; } = "Combined"; // Table/Food
+        public string PaymentType { get; set; } = "Combined";
         public string PaymentStatus { get; set; } = "Pending";
         public DateTime PaymentDate { get; set; }
 
-        // Navigation
         public Booking Booking { get; set; } = null!;
     }
-
 }

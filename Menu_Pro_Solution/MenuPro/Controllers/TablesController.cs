@@ -27,5 +27,4 @@ namespace Hotel.Controllers
                 .Where(t => t.RestaurantId == restaurantId)
                 .ToListAsync());
     }
-
 }
