@@ -1,10 +1,146 @@
-.cards {
-  display: flex;
+/* ===============================
+   THEME VARIABLES (LOCKED)
+   =============================== */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(255, 178, 71, 0.45);
+}
+
+/* ===============================
+   PAGE
+   =============================== */
+.manager-dashboard {
+  padding: 24px;
+  background: var(--bg-page);
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--text-normal);
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+.dashboard-header h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.dashboard-header p {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   KPI CARDS
+   =============================== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--bg-panel);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.kpi-card h3 {
+  font-size: 24px;
+  color: var(--accent-rating);
+}
+
+.kpi-card p {
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ===============================
+   MAIN GRID
+   =============================== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
 
-.card {
-  background: white;
+.dashboard-card {
+  background: var(--bg-panel);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.dashboard-card h2 {
+  margin-bottom: 14px;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+/* ===============================
+   LISTS
+   =============================== */
+.status-list,
+.simple-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.status-list li,
+.simple-list li {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: var(--text-normal);
+}
+
+/* ===============================
+   WEEKLY REVENUE
+   =============================== */
+.full-width {
+  grid-column: 1 / -1;
+  margin-top: 20px;
+}
+
+.revenue-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 160px;
+  margin-top: 20px;
+}
+
+.revenue-bar span {
+  flex: 1;
+  background: linear-gradient(
+    180deg,
+    var(--accent-primary),
+    var(--accent-rating)
+  );
+  border-radius: 6px 6px 0 0;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  color: #1a0f0f;
+  font-size: 12px;
+  padding-bottom: 6px;
+
+  box-shadow: var(--shadow-glow);
 }
