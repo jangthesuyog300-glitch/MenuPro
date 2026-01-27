@@ -1,6 +1,4 @@
-﻿using Razorpay.Api;
-
-namespace Hotel.Models
+﻿namespace Hotel.Models
 {
     public class Booking
     {
@@ -15,7 +13,6 @@ namespace Hotel.Models
         public string BookingStatus { get; set; } = "Pending";
         public decimal BookingAmount { get; set; }
 
-        // Navigation
         public User User { get; set; } = null!;
         public Restaurant Restaurant { get; set; } = null!;
         public Table Table { get; set; } = null!;
@@ -24,5 +21,4 @@ namespace Hotel.Models
         public ICollection<BookingFood> BookingFoods { get; set; } = new List<BookingFood>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
-
 }

@@ -10,9 +10,7 @@
         public int Quantity { get; set; }
         public decimal Price { get; set; }
 
-        // Navigation
         public Booking Booking { get; set; } = null!;
         public FoodItem FoodItem { get; set; } = null!;
     }
-
 }

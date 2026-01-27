@@ -9,9 +9,7 @@
         public int Capacity { get; set; }
         public string Status { get; set; } = "Available";
 
-        // Navigation
         public Restaurant Restaurant { get; set; } = null!;
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
-
 }
