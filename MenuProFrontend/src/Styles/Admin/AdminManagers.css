@@ -1,59 +1,115 @@
-.admin-managers h1 {
-  margin-bottom: 20px;
-  color: #e5e7eb;
+/* ===============================
+   THEME VARIABLES (LOCKED)
+   =============================== */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(255, 178, 71, 0.45);
 }
 
+/* ===============================
+   PAGE TITLE
+   =============================== */
+.admin-managers h1 {
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+/* ===============================
+   TABLE
+   =============================== */
 .managers-table {
   width: 100%;
   border-collapse: collapse;
-  background: #111827;
-  color: #e5e7eb;
+  background: var(--bg-panel);
+  color: var(--text-normal);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.managers-table thead {
+  background: var(--bg-panel-soft);
+  color: var(--text-muted);
 }
 
 .managers-table th,
 .managers-table td {
   padding: 12px;
-  border-top: 1px solid #2d3748;
+  border-top: 1px solid rgba(255, 107, 107, 0.3);
   text-align: center;
-}
-
-.managers-table thead {
-  background: #1f2937;
-  color: #9ca3af;
+  font-size: 14px;
 }
 
 .managers-table tbody tr:hover {
-  background: #1f2937;
+  background: var(--bg-panel-soft);
 }
 
+/* ===============================
+   STATUS
+   =============================== */
 .active {
-  color: #4ade80;
-  font-weight: bold;
-}
-
-.inactive {
-  color: #f87171;
-  font-weight: bold;
-}
-
-input {
-  padding: 5px;
-  width: 80px;
-  text-align: center;
-  border-radius: 4px;
-  border: none;
-}
-
-button {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  background: #2563eb;
-  color: white;
+  color: var(--accent-rating);
   font-weight: 600;
 }
 
+.inactive {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ===============================
+   INPUT
+   =============================== */
+input {
+  padding: 6px;
+  width: 80px;
+  text-align: center;
+
+  background: var(--bg-page);
+  color: var(--text-normal);
+
+  border-radius: 6px;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
+}
+
+/* ===============================
+   BUTTON
+   =============================== */
+button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    var(--accent-primary),
+    var(--accent-rating)
+  );
+
+  color: #1a0f0f;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
 button:hover {
-  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
 }
