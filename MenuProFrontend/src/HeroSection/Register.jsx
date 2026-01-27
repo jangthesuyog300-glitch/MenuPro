@@ -219,6 +219,7 @@ export default function RegisterModal({ isOpen, onClose }) {
             <option value="Customer">Customer</option>
             <option value="Staff">Staff</option>
             <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
           </select>
 
           <button type="submit" className="login-btn">

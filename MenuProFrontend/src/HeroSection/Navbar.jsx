@@ -8,17 +8,26 @@ import { useAuth } from "../context/AuthContext";
 import UserProfileDropdown from "../Components/UserProfileDropdown";
 
 export default function Navbar() {
-  const { user } = useAuth(); // ✅ AUTH CONTEXT
+  // 🔐 AUTH CONTEXT = SINGLE SOURCE OF TRUTH
+  const { user } = useAuth();
   const isLoggedIn = !!user;
+  const role = user?.role;
 
   const [searchText, setSearchText] = useState("");
 
+  // 🔐 MODAL STATES
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
     console.log("Search:", searchText);
+  };
+
+  // 🔥 CALLED AFTER SUCCESSFUL LOGIN
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+    setShowRegister(false);
   };
 
   return (
@@ -34,13 +43,25 @@ export default function Navbar() {
 
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
-              <li className="nav-item">
-                <Link className="nav-link" to="/">
-                  Home
-                </Link>
-              </li>
+              {/* ✅ DASHBOARD ONLY FOR MANAGER */}
+              {role === "Manager" && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/manager">
+                    Dashboard
+                  </Link>
+                </li>
+              )}
 
-              {/* ✅ HISTORY ONLY IF LOGGED IN */}
+              {/* ✅ HOME HIDDEN FOR MANAGER */}
+              {role !== "Manager" && (
+                <li className="nav-item">
+                  <Link className="nav-link active" to="/">
+                    Home
+                  </Link>
+                </li>
+              )}
+
+              {/* ✅ HISTORY ONLY WHEN LOGGED IN */}
               {isLoggedIn && (
                 <li className="nav-item">
                   <Link className="nav-link" to="/history">
@@ -79,14 +100,14 @@ export default function Navbar() {
                 Login
               </button>
             ) : (
-              <UserProfileDropdown user={user} />   
+              <UserProfileDropdown user={user} />
             )}
 
           </div>
         </div>
       </nav>
 
-      {/* LOGIN MODAL */}
+      {/* 🔐 LOGIN MODAL */}
       <LoginModal
         isOpen={showLogin}
         onClose={() => setShowLogin(false)}
@@ -94,9 +115,10 @@ export default function Navbar() {
           setShowLogin(false);
           setShowRegister(true);
         }}
+        onLoginSuccess={handleLoginSuccess}
       />
 
-      {/* REGISTER MODAL */}
+      {/* 📝 REGISTER MODAL */}
       <RegisterModal
         isOpen={showRegister}
         onClose={() => setShowRegister(false)}

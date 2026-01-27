@@ -1,5 +1,3 @@
-
-
 import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./HeroSection/Navbar.jsx";
@@ -19,6 +17,8 @@ import Homepage from "./HeroSection/Homepage.jsx";
 import AboutUs from "./HeroSection/Aboutus.jsx";
 import BookingHistory from "./HeroSection/BookingHistory.jsx";
 
+import ManagerRoute from "./Components/manager/ManagerRoute.jsx";
+import PublicRoute from "./Components/PublicRoute.jsx";
 
 import "./StylesH/App1.css";
 
@@ -32,21 +32,26 @@ export default function App() {
         <Routes>
 
           {/* ================= PUBLIC ROUTES ================= */}
-          <Route path="/" element={<Homepage />} />
-          <Route path="/about" element={<AboutUs/>}/>
+          <Route path="/" element={<PublicRoute><Homepage /></PublicRoute>}/>
+          <Route path="/about" element={<AboutUs />} />
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/restaurant/:id/book" element={<BookTablePage />} />
 
-          {/* ================= MANAGER ROUTES ================= */}
-          <Route path="/manager" element={<ManagerLayout />}>
-
+          {/* ================= MANAGER ROUTES (PROTECTED) ================= */}
+          <Route
+            path="/manager"
+            element={
+              <ManagerRoute>
+                <ManagerLayout />
+              </ManagerRoute>
+            }
+          >
             <Route index element={<Dashboard />} />
             <Route path="restaurant" element={<MyRestaurant />} />
             <Route path="food" element={<FoodMenu />} />
             <Route path="tables" element={<Tables />} />
             <Route path="bookings" element={<Bookings />} />
             <Route path="payments" element={<Payments />} />
-
           </Route>
           <Route path="/history" element={<BookingHistory />} />
 
