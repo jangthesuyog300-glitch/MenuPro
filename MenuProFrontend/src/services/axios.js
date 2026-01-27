@@ -1,11 +1,13 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://localhost:5001/api", // ⚠️ change if backend port differs
+  baseURL: "https://localhost:44315/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+
 
 // ✅ Attach JWT token to every request
 axiosInstance.interceptors.request.use(
@@ -27,7 +29,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }

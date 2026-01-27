@@ -1,0 +1,32 @@
+.about-page {
+    padding: 40px;
+    max-width: 900px;
+    margin: auto;
+    color: #e5e7eb;
+  }
+  
+  .about-page h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+  
+  .tagline {
+    color: #9ca3af;
+    margin-bottom: 30px;
+  }
+  
+  .about-section {
+    margin-bottom: 30px;
+  }
+  
+  .about-section h2 {
+    color: #3b82f6;
+    margin-bottom: 8px;
+  }
+  
+  .about-section p,
+  .about-section li {
+    line-height: 1.6;
+    color: #d1d5db;
+  }
+  

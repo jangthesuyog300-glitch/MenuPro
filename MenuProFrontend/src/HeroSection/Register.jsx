@@ -130,7 +130,7 @@ export default function RegisterModal({ isOpen, onClose }) {
     name: "",
     email: "",
     phone: "",
-    passwordHash: "",
+    password: "",
     role: "Customer",
   });
 
