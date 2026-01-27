@@ -15,8 +15,10 @@ export const loginUser = async (email, password) => {
 
 // 📝 REGISTER
 export const registerUser = async (userData) => {
+  console.log("Register payload being sent:", userData); // 🔥 TEMP DEBUG
   return axios.post("/auth/register", userData);
 };
+
 
 // 🚪 LOGOUT (optional but useful)
 export const logoutUser = () => {

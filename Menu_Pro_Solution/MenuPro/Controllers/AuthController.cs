@@ -208,43 +208,40 @@ public class AuthController : ControllerBase
         _config = config;
     }
 
-    // ✅ REGISTER
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        try
+        // 🔴 ADD THIS HERE (TOP OF METHOD)
+        if (string.IsNullOrWhiteSpace(dto.Password))
         {
-            if (string.IsNullOrWhiteSpace(dto.Name) ||
-                string.IsNullOrWhiteSpace(dto.Email) ||
-                string.IsNullOrWhiteSpace(dto.Password) ||
-                string.IsNullOrWhiteSpace(dto.Role))
-            {
-                return BadRequest("All fields are required");
-            }
-
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-                return BadRequest("Email already exists");
-
-            var user = new User
-            {
-                Name = dto.Name,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                Role = dto.Role,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("User registered successfully");
+            return BadRequest("Password is required");
         }
-        catch (Exception ex)
+
+        if (string.IsNullOrWhiteSpace(dto.Email))
         {
-            Console.WriteLine(ex.Message);
-            return StatusCode(500, "Internal server error");
+            return BadRequest("Email is required");
         }
+
+        if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+        {
+            return BadRequest("Email already exists");
+        }
+
+        var user = new User
+        {
+            Name = dto.Name,
+            Email = dto.Email,
+            Phone = dto.Phone,
+            Role = dto.Role,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        return Ok("User registered successfully");
     }
+
 
 
     // ✅ LOGIN

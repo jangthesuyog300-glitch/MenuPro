@@ -126,11 +126,13 @@ import { registerUser } from "../services/authService";
 
 export default function RegisterModal({ isOpen, onClose }) {
 
+  
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    password: "",
+    password: "",       // ✅ ONLY password
     role: "Customer",
   });
 
@@ -199,12 +201,13 @@ export default function RegisterModal({ isOpen, onClose }) {
 
           <input
             type="password"
-            name="passwordHash"
+            name="password"
             placeholder="Password"
-            value={formData.passwordHash}
+            value={formData.password}
             onChange={handleChange}
             required
           />
+
 
           {/* ROLE */}
           <select
