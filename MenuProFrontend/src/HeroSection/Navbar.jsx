@@ -2,8 +2,14 @@ import { useState } from "react";
 import "../Styles/Navbar.css";
 import LoginModal from "../HeroSection/Login";
 import RegisterModal from "../HeroSection/Register";
+import { Link } from "react-router-dom";
+
+import UserProfileDropdown from "../Components/UserProfileDropdown";
 
 export default function Navbar() {
+
+  // 🔐 AUTH CHECK
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const [searchText, setSearchText] = useState("");
 
@@ -27,7 +33,7 @@ export default function Navbar() {
   const handleMouseEnter = () => {
     const timer = setTimeout(() => {
       setAuthMode("register");
-    }, 800); // 🔥 2 seconds
+    }, 800);
 
     setHoverTimer(timer);
   };
@@ -37,8 +43,6 @@ export default function Navbar() {
       clearTimeout(hoverTimer);
       setHoverTimer(null);
     }
-
-    // 🔥 Immediate reset
     setAuthMode("login");
   };
 
@@ -72,24 +76,15 @@ export default function Navbar() {
 
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <a className="nav-link active" href="#">Home</a>
+                <a className="nav-link active" href="/">Home</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">Menu</a>
-              </li>
-              <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                  Manage
-                </a>
-                <ul className="dropdown-menu">
-                  <li><a className="dropdown-item" href="#">Orders</a></li>
-                  <li><a className="dropdown-item" href="#">Reservations</a></li>
-                  <li><hr className="dropdown-divider" /></li>
-                  <li><a className="dropdown-item" href="#">Inventory</a></li>
-                </ul>
+                <a className="nav-link" href="#">History</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link disabled">Admin Only</a>
+                <Link className="nav-link" to="/about">
+                  About Us
+                </Link>
               </li>
             </ul>
 
@@ -107,19 +102,22 @@ export default function Navbar() {
               </button>
             </form>
 
-            {/* 🔁 LOGIN / REGISTER BUTTON */}
-                        <button
-            className="auth-btn"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onClick={handleAuthClick}
-            >
-            <div className={`auth-inner ${authMode === "register" ? "flipped" : ""}`}>
-                <span className="auth-face auth-front">Login</span>
-                <span className="auth-face auth-back">Register</span>
-            </div>
-            </button>
-
+            {/* 🔁 AUTH BUTTON / PROFILE */}
+            {!isLoggedIn ? (
+              <button
+                className="auth-btn"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onClick={handleAuthClick}
+              >
+                <div className={`auth-inner ${authMode === "register" ? "flipped" : ""}`}>
+                  <span className="auth-face auth-front">Login</span>
+                  <span className="auth-face auth-back">Register</span>
+                </div>
+              </button>
+            ) : (
+              <UserProfileDropdown />
+            )}
 
           </div>
         </div>

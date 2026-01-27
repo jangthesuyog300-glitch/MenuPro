@@ -1,5 +1,4 @@
 ﻿using Hotel.Models;
-// 🔽 ADD THESE
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -24,20 +23,7 @@ namespace Hotel
             // 🔹 Add Controllers
             builder.Services.AddControllers();
 
-
-            // Add CORS policy
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowReactApp",
-            //        policy => policy
-            //            .WithOrigins("http://localhost:3000")
-            //            .AllowAnyHeader()
-            //            .AllowAnyMethod());
-            //});
-
-
-
-
+            // 🔹 ADD CORS POLICY (FRONTEND: VITE)
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowReact",
@@ -50,7 +36,7 @@ namespace Hotel
                     });
             });
 
-            // 🔹 ADD JWT AUTHENTICATION CONFIG
+            // 🔹 ADD JWT AUTHENTICATION
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -72,14 +58,18 @@ namespace Hotel
             // 🔹 ADD AUTHORIZATION
             builder.Services.AddAuthorization();
 
-            // 🔹 Swagger + JWT integration
+            // 🔹 SWAGGER + JWT
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Hotel API",
+                    Version = "v1"
+                });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using Bearer scheme.\r\nExample: 'Bearer 12345abcdef'",
+                    Description = "JWT Authorization header using Bearer scheme. Example: \"Bearer {token}\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -97,7 +87,7 @@ namespace Hotel
                                 Id = "Bearer"
                             }
                         },
-                        new string[] { }
+                        new string[] {}
                     }
                 });
             });
@@ -106,24 +96,25 @@ namespace Hotel
 
             var app = builder.Build();
 
-            // 🔹 Middleware
+            // 🔹 MIDDLEWARE PIPELINE (ORDER MATTERS)
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
+            app.UseHttpsRedirection();
 
+            app.UseRouting();
 
-            // Use CORS
-            //app.UseCors("AllowReactApp");
-
+            // 🔥 CORS MUST BE HERE (BEFORE AUTH)
             app.UseCors("AllowReact");
 
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.MapControllers();
+
             app.Run();
         }
     }
