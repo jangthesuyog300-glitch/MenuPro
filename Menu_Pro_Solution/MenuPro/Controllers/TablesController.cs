@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/tables")]
     public class TablesController : ControllerBase
@@ -13,6 +12,8 @@ namespace Hotel.Controllers
         private readonly AppDbContext _context;
         public TablesController(AppDbContext context) => _context = context;
 
+        // ✅ Only Admin can add tables
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Add(Table table)
         {
@@ -21,6 +22,8 @@ namespace Hotel.Controllers
             return Ok(table);
         }
 
+        // ✅ Manager/Admin/User can view tables (needed for booking/dashboard)
+        [Authorize(Roles = "User,Manager,Admin")]
         [HttpGet("restaurant/{restaurantId}")]
         public async Task<IActionResult> GetByRestaurant(int restaurantId)
             => Ok(await _context.Tables
