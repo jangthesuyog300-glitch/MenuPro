@@ -8,17 +8,21 @@ import UserProfileDropdown from "../Components/UserProfileDropdown";
 
 export default function Navbar() {
 
-  // 🔐 AUTH CHECK
-  const isLoggedIn = !!localStorage.getItem("token");
+  // 🔐 AUTH STATE (read-only)
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("token")
+  );
+  
+  const role = localStorage.getItem("role");
 
   const [searchText, setSearchText] = useState("");
 
-  // 🔐 AUTH MODAL STATES
+  // 🔐 MODAL STATES (SINGLE SOURCE OF TRUTH)
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
   // 🔁 HOVER STATE
-  const [authMode, setAuthMode] = useState("login"); // login | register
+  const [authMode, setAuthMode] = useState("login");
   const [hoverTimer, setHoverTimer] = useState(null);
 
   const handleSearch = (e) => {
@@ -27,14 +31,13 @@ export default function Navbar() {
   };
 
   /* ================================
-     HOVER LOGIC (FINAL)
+     HOVER LOGIC
   ================================ */
 
   const handleMouseEnter = () => {
     const timer = setTimeout(() => {
       setAuthMode("register");
     }, 800);
-
     setHoverTimer(timer);
   };
 
@@ -54,6 +57,13 @@ export default function Navbar() {
     }
   };
 
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);     // 🔥 FORCE RE-RENDER
+    setShowLogin(false);    // 🔥 CLOSE MODAL
+    setShowRegister(false);
+  };
+  
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -74,19 +84,36 @@ export default function Navbar() {
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
 
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+
+            {/* ✅ DASHBOARD (ONLY FOR MANAGER) */}
+            {role === "Manager" && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/manager">
+                  Dashboard
+                </Link>
+              </li>
+            )}
+
+            {/* HOME (HIDDEN FOR MANAGER) */}
+            {role !== "Manager" && (
               <li className="nav-item">
                 <a className="nav-link active" href="/">Home</a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">History</a>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/about">
-                  About Us
-                </Link>
-              </li>
+            )}
+
+            <li className="nav-item">
+              <a className="nav-link" href="#">History</a>
+            </li>
+
+            <li className="nav-item">
+              <Link className="nav-link" to="/about">
+                About Us
+              </Link>
+            </li>
+
             </ul>
+
 
             {/* SEARCH */}
             <form className="d-flex me-3" onSubmit={handleSearch}>
@@ -102,7 +129,7 @@ export default function Navbar() {
               </button>
             </form>
 
-            {/* 🔁 AUTH BUTTON / PROFILE */}
+            {/* 🔐 AUTH AREA */}
             {!isLoggedIn ? (
               <button
                 className="auth-btn"
@@ -124,14 +151,16 @@ export default function Navbar() {
       </nav>
 
       {/* 🔐 LOGIN MODAL */}
-      <LoginModal
+            <LoginModal
         isOpen={showLogin}
         onClose={() => setShowLogin(false)}
         onRegisterClick={() => {
           setShowLogin(false);
           setShowRegister(true);
         }}
+        onLoginSuccess={handleLoginSuccess}
       />
+
 
       {/* 📝 REGISTER MODAL */}
       <RegisterModal
