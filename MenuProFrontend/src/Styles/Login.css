@@ -1,144 +1,164 @@
 /* ================================
-   OVERLAY (SIMPLE DARK)
+   THEME VARIABLES (LOCKED)
+================================ */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(255, 178, 71, 0.45);
+}
+
+/* ================================
+   OVERLAY
 ================================ */
 .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 15, 25, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  /* ================================
-     LOGIN MODAL BOX
-     (FADED IMAGE + BLUE TINT)
-  ================================ */
-  .login-modal {
-    position: relative;
-    width: 390px;
-    min-height: 460px;
-    padding: 38px 32px;
-  
-    /* Image + blue fade */
-    background:
-      rgba(15, 30, 58, 0.75),
-      url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5")
-        center / cover no-repeat;
-  
-    border-radius: 14px;
-    border: 1px solid #1e3a8a;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-  
-    color: #e5e7eb;
-  }
-  
-  /* ================================
-     HEADER
-  ================================ */
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
-  }
-  
-  .modal-header h3 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    color: #f9fafb;              /* 🔥 clearly visible */
-  }
-  
-  .close-btn {
-    font-size: 22px;
-    cursor: pointer;
-    color: #f9fafb;              /* 🔥 clearly visible */
-    font-weight: bold;
-  }
-  
-  .close-btn:hover {
-    color: #ffffff;
-  }
-  
-  /* ================================
-     INPUT FIELDS
-  ================================ */
-  .login-modal input {
-    width: 100%;
-    margin-bottom: 22px;
-    padding: 14px 14px;
-  
-    background-color: rgba(10, 15, 25, 0.95);
-    border: 1px solid #1e3a8a;
-    border-radius: 10px;
-  
-    color: #e5e7eb;
-    font-size: 14px;
-  }
-  
-  .login-modal input::placeholder {
-    color: #9ca3af;
-  }
-  
-  .login-modal input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 1px #3b82f6;
-  }
-  
-  /* ================================
-     LOGIN BUTTON
-  ================================ */
-  .login-btn {
-    width: 100%;
-    padding: 14px;
-    margin-top: 14px;
-  
-    background-color: #3b82f6;
-    border: none;
-    color: #0b0f1a;
-  
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  
-  .login-btn:hover {
-    background-color: #2563eb;
-  }
-  
-  /* ================================
-     ERROR MESSAGE
-  ================================ */
-  .error-text {
-    color: #fca5a5;
-    font-size: 13px;
-    margin-bottom: 14px;
-  }
-  
-  /* ================================
-     FOOTER
-  ================================ */
-  .modal-footer {
-    margin-top: 34px;
-    text-align: center;
-    font-size: 13px;
-    color: #e5e7eb;              /* 🔥 readable */
-  }
-  
-  .register-link {
-    display: block;
-    margin-top: 12px;
-    color: #93c5fd;              /* 🔥 visible link */
-    cursor: pointer;
-    font-weight: 500;
-    text-decoration: underline;
-  }
-  
-  .register-link:hover {
-    color: #bfdbfe;
-  }
-  
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 30, 30, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* ================================
+   LOGIN MODAL
+================================ */
+.login-modal {
+  position: relative;
+  width: 390px;
+  min-height: 460px;
+  padding: 38px 32px;
+
+  background:
+    linear-gradient(
+      rgba(30, 30, 30, 0.85),
+      rgba(30, 30, 30, 0.85)
+    ),
+    url("https://images.unsplash.com/photo-1555396273-367ea4eb4db5")
+      center / cover no-repeat;
+
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  color: var(--text-normal);
+}
+
+/* ================================
+   HEADER
+================================ */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-btn {
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+}
+
+/* ================================
+   INPUT FIELDS
+================================ */
+.login-modal input {
+  width: 100%;
+  margin-bottom: 22px;
+  padding: 14px 14px;
+
+  background-color: var(--bg-page);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  border-radius: 10px;
+
+  color: var(--text-normal);
+  font-size: 14px;
+}
+
+.login-modal input::placeholder {
+  color: var(--text-muted);
+}
+
+.login-modal input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
+}
+
+/* ================================
+   LOGIN BUTTON
+================================ */
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 14px;
+
+  background-color: var(--accent-primary);
+  border: none;
+  color: #1a0f0f;
+
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ================================
+   ERROR MESSAGE
+================================ */
+.error-text {
+  color: var(--accent-rating);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+/* ================================
+   FOOTER
+================================ */
+.modal-footer {
+  margin-top: 34px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.register-link {
+  display: block;
+  margin-top: 12px;
+  color: var(--accent-primary);
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.register-link:hover {
+  color: var(--accent-rating);
+}

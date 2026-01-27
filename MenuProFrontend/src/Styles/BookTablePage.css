@@ -1,58 +1,91 @@
+/* ===============================
+   THEME VARIABLES (LOCKED)
+   =============================== */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(255, 178, 71, 0.45);
+}
+
+/* ===============================
+   PAGE
+   =============================== */
 .book-table-page {
   display: flex;
   gap: 30px;
   padding: 30px;
-  color: #e5e7eb;
+  color: var(--text-normal);
   align-items: flex-start;
+  background: var(--bg-page);
 }
 
-/* LEFT */
+/* ===============================
+   LEFT
+   =============================== */
 .menu-section {
   flex: 1;
-  background: #020617;
+  background: var(--bg-panel-soft);
   padding: 20px;
-  border-radius: 12px;
-  border: 1px dashed #334155;
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 107, 107, 0.35);
   min-height: 400px;
+  box-shadow: var(--shadow-soft);
 }
 
-/* RIGHT */
+/* ===============================
+   RIGHT
+   =============================== */
 .booking-section {
   width: 360px;
   flex-shrink: 0;
 }
 
-/* FORM */
+/* ===============================
+   FORM
+   =============================== */
 .book-form {
-  background: #0b1220;
+  background: var(--bg-panel);
   padding: 25px;
-  border-radius: 12px;
-  border: 1px solid #1e3a8a;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
 }
 
 .book-form label {
   display: block;
   margin-top: 14px;
   font-size: 14px;
+  color: var(--text-muted);
 }
 
 .book-form input {
   width: 100%;
   margin-top: 6px;
   padding: 10px;
-  background: #020617;
-  color: #fff;
-  border: 1px solid #334155;
-  border-radius: 6px;
+  background: var(--bg-page);
+  color: var(--text-normal);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  border-radius: 8px;
 }
 
 .book-form input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59,130,246,0.3);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
 }
 
-/* PEOPLE SELECTOR */
+/* ===============================
+   PEOPLE SELECTOR
+   =============================== */
 .people-selector {
   display: flex;
   gap: 10px;
@@ -63,67 +96,58 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #020617;
-  border: 1px solid #334155;
-  color: #e5e7eb;
+  background: var(--bg-page);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: var(--text-normal);
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 .people-btn:hover {
   transform: scale(1.1);
-  border-color: #3b82f6;
+  border-color: var(--accent-primary);
 }
 
 .people-btn.active {
-  background: #3b82f6;
-  color: #020617;
+  background: var(--accent-primary);
+  color: #1a0f0f;
   transform: scale(1.15);
-  box-shadow: 0 0 12px rgba(59,130,246,0.6);
+  box-shadow: var(--shadow-glow);
 }
 
-/* TIME LABEL */
+/* ===============================
+   TIME LABEL
+   =============================== */
 .time-label {
   font-size: 12px;
   margin-left: 6px;
-  color: #93c5fd;
+  color: var(--text-muted);
 }
 
-/* BUTTON */
+/* ===============================
+   BUTTON
+   =============================== */
 .book-form button {
   width: 100%;
   margin-top: 22px;
   padding: 12px;
-  background: #3b82f6;
+  background: var(--accent-primary);
   border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
+  color: #1a0f0f;
+  transition: all 0.3s ease;
 }
 
 .book-form button:hover {
-  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
 }
 
-
-/* HORIZONTAL PEOPLE SCROLL */
-.people-scroll {
-  display: flex;
-  gap: 10px;
-  margin-top: 6px;
-  padding-bottom: 6px;
-
-  overflow-x: auto;
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE */
-}
-
-.people-scroll::-webkit-scrollbar {
-  display: none;                /* Chrome */
-}
-
-/* PEOPLE PILLS */
-/* HORIZONTAL SCROLL CONTAINER */
+/* ===============================
+   HORIZONTAL PEOPLE SCROLL
+   =============================== */
 .people-scroll {
   display: flex;
   gap: 10px;
@@ -139,14 +163,16 @@
   display: none;
 }
 
-/* PEOPLE BUTTONS */
+/* ===============================
+   PEOPLE PILLS
+   =============================== */
 .people-pill {
   min-width: 44px;
   height: 44px;
   border-radius: 999px;
-  background: #020617;
-  border: 1px solid #334155;
-  color: #e5e7eb;
+  background: var(--bg-page);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: var(--text-normal);
   cursor: pointer;
 
   display: flex;
@@ -156,10 +182,9 @@
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
-/* ACTIVE STATE ONLY */
 .people-pill.active {
-  background: #3b82f6;
-  color: #020617;
+  background: var(--accent-primary);
+  color: #1a0f0f;
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(59,130,246,0.5);
+  box-shadow: var(--shadow-glow);
 }

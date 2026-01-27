@@ -1,37 +1,56 @@
 /* ================================
+   THEME VARIABLES (LOCKED)
+================================ */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 18px rgba(255, 178, 71, 0.35);
+}
+
+/* ================================
    NAVBAR BASE
 ================================ */
 .navbar {
-  background-color: #000 !important;   /* Black background */
-  border-bottom: 2px solid #b30000;     /* Red border */
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25); /* Red shadow */
+  background-color: var(--bg-panel) !important;
+  border-bottom: 2px solid rgba(255, 107, 107, 0.6);
+  box-shadow: var(--shadow-soft);
 }
 
 /* ================================
    BRAND
 ================================ */
 .navbar-brand {
-  color: #ff1a1a !important;
+  color: var(--text-primary) !important;
   font-weight: bold;
   font-size: 1.4rem;
   letter-spacing: 1px;
 }
 
 .navbar-brand:hover {
-  color: #ff4d4d !important;
+  color: var(--accent-rating) !important;
 }
 
 /* ================================
    NAV LINKS
 ================================ */
 .navbar-nav .nav-link {
-  color: #ffffff !important;
+  color: var(--text-normal) !important;
   margin: 0 8px;
   position: relative;
   transition: all 0.3s ease;
 }
 
-/* Hover border animation */
+/* Hover underline animation */
 .navbar-nav .nav-link::after {
   content: "";
   position: absolute;
@@ -39,7 +58,7 @@
   height: 2px;
   left: 0;
   bottom: -4px;
-  background-color: #ff1a1a;
+  background-color: var(--accent-primary);
   transition: width 0.3s ease;
 }
 
@@ -48,12 +67,12 @@
 }
 
 .navbar-nav .nav-link:hover {
-  color: #ff1a1a !important;
+  color: var(--accent-primary) !important;
 }
 
 /* Active link */
 .navbar-nav .nav-link.active {
-  color: #ff1a1a !important;
+  color: var(--accent-primary) !important;
   font-weight: 600;
 }
 
@@ -61,63 +80,63 @@
    DROPDOWN
 ================================ */
 .dropdown-menu {
-  background-color: #111;
-  border: 1px solid #ff1a1a;
-  box-shadow: 0 6px 15px rgba(255, 0, 0, 0.3);
+  background-color: var(--bg-panel);
+  border: 1px solid rgba(255, 107, 107, 0.6);
+  box-shadow: var(--shadow-soft);
 }
 
 .dropdown-item {
-  color: #ffffff;
+  color: var(--text-normal);
   transition: background 0.3s ease, color 0.3s ease;
 }
 
 .dropdown-item:hover {
-  background-color: #ff1a1a;
-  color: #000;
+  background-color: var(--accent-primary);
+  color: #1a0f0f;
 }
 
 /* Divider */
 .dropdown-divider {
-  border-color: #ff1a1a;
+  border-color: rgba(255, 107, 107, 0.4);
 }
 
 /* ================================
    SEARCH BAR
 ================================ */
 .form-control {
-  background-color: #000;
-  color: #fff;
-  border: 1px solid #ff1a1a;
+  background-color: var(--bg-page);
+  color: var(--text-normal);
+  border: 1px solid rgba(255, 107, 107, 0.5);
 }
 
 .form-control::placeholder {
-  color: #aaa;
+  color: var(--text-muted);
 }
 
 .form-control:focus {
-  background-color: #000;
-  color: #fff;
-  border-color: #ff4d4d;
-  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+  background-color: var(--bg-page);
+  color: var(--text-normal);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
 }
 
 /* Search Button */
 .btn-outline-success {
-  color: #ff1a1a;
-  border-color: #ff1a1a;
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
 }
 
 .btn-outline-success:hover {
-  background-color: #ff1a1a;
-  color: #000;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+  background-color: var(--accent-primary);
+  color: #1a0f0f;
+  box-shadow: var(--shadow-glow);
 }
 
 /* ================================
    TOGGLER (MOBILE)
 ================================ */
 .navbar-toggler {
-  border: 1px solid #ff1a1a;
+  border: 1px solid rgba(255, 107, 107, 0.6);
 }
 
 .navbar-toggler-icon {
@@ -128,31 +147,12 @@
    DISABLED LINK
 ================================ */
 .nav-link.disabled {
-  color: #777 !important;
+  color: var(--text-muted) !important;
 }
 
-
-/* flipping effect in the Register and login buttion */
-
-/* ================================
-   AUTH BUTTON FLIP EFFECT
-================================ */
-.auth-btn {
-  transition: transform 0.6s ease, background-color 0.4s ease;
-  transform-style: preserve-3d;
-}
-
-.auth-btn.register {
-  transform: rotateY(180deg);
-}
-
-/* ================================
-   AUTH BUTTON 3D FLIP (FIXED)
-================================ */
 /* ================================
    AUTH BUTTON – TRUE 3D FLIP
 ================================ */
-
 .auth-btn {
   position: relative;
   width: 110px;
@@ -163,10 +163,10 @@
   padding: 0;
   cursor: pointer;
 
-  perspective: 1000px; /* 🔥 REQUIRED */
+  perspective: 1000px;
 }
 
-/* INNER WRAPPER (THIS ROTATES) */
+/* INNER WRAPPER */
 .auth-inner {
   position: relative;
   width: 100%;
@@ -192,20 +192,20 @@
 
   font-weight: 600;
   font-size: 14px;
-  color: #fff;
+  color: #1a0f0f;
 
-  backface-visibility: hidden; /* 🔥 CRITICAL */
+  backface-visibility: hidden;
   border-radius: 6px;
 }
 
 /* FRONT (LOGIN) */
 .auth-front {
-  background-color: #dc3545; /* bootstrap danger */
+  background-color: var(--accent-primary);
   transform: rotateY(0deg);
 }
 
 /* BACK (REGISTER) */
 .auth-back {
-  background-color: #0d6efd; /* bootstrap primary */
+  background-color: var(--accent-rating);
   transform: rotateY(180deg);
 }

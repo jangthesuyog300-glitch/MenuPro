@@ -1,22 +1,39 @@
-/* ================================
+/* ===============================
+   THEME VARIABLES (LOCKED)
+   =============================== */
+:root {
+  --bg-page: #1e1e1e;
+  --bg-panel: #2a2a2a;
+  --bg-panel-soft: rgba(55, 55, 55, 0.7);
+
+  --text-primary: #ff6b6b;
+  --text-normal: #e5e5e5;
+  --text-muted: #b5b5b5;
+
+  --accent-primary: #ff6b6b;
+  --accent-rating: #ffd166;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* ===============================
    SELECT (ROLE DROPDOWN)
-================================ */
+   =============================== */
 .login-select {
-    width: 100%;
-    margin-bottom: 22px;
-    padding: 14px;
-  
-    background-color: rgba(10, 15, 25, 0.95);
-    border: 1px solid #1e3a8a;
-    border-radius: 10px;
-  
-    color: #e5e7eb;
-    font-size: 14px;
-  }
-  
-  .login-select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 1px #3b82f6;
-  }
-  
+  width: 100%;
+  margin-bottom: 22px;
+  padding: 14px;
+
+  background-color: var(--bg-page);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  border-radius: 10px;
+
+  color: var(--text-normal);
+  font-size: 14px;
+}
+
+.login-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
+}
