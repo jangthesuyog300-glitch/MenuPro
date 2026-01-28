@@ -21,13 +21,24 @@ namespace Hotel.Controllers
             return Ok(food);
         }
 
-        
-        [AllowAnonymous]
+
+        [Authorize(Roles = "Manager,Admin")]
         [HttpGet("restaurant/{restaurantId}")]
         public async Task<IActionResult> GetByRestaurant(int restaurantId)
-    => Ok(await _context.FoodItems
-        .Where(f => f.RestaurantId == restaurantId && f.IsAvailable)
-        .ToListAsync());
+        {
+            var data = await _context.FoodItems
+                .Where(f => f.RestaurantId == restaurantId)
+                .Select(f => new
+                {
+                    id = f.FoodItemId,
+                    name = f.FoodName,
+                    price = f.Price,
+                    available = f.IsAvailable
+                })
+                .ToListAsync();
+
+            return Ok(data);
+        }
 
     }
 }

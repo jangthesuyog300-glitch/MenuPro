@@ -8,11 +8,11 @@
         public string Email { get; set; } = null!;
         public string Phone { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
+        public string Role { get; set; } = "Customer";
 
-        public string Role { get; set; } = "User";
-
-        // ✅ For Manager/Admin accounts: which restaurant they manage
+        // ✅ Manager belongs to one restaurant (Customer/Admin can be null)
         public int? RestaurantId { get; set; }
+        public Restaurant? Restaurant { get; set; }
 
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }

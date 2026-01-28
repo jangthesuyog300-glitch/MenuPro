@@ -1,99 +1,59 @@
+import { useEffect, useState } from "react";
 import "../../Styles/manager/Dashboard.css";
+import axiosInstance from "../../services/axiosInstance";
 
 export default function Dashboard() {
+  const restaurantId = localStorage.getItem("restaurantId");
+
+  const [summary, setSummary] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setError("");
+        const res = await axiosInstance.get(`/manager/summary/${restaurantId}`);
+        setSummary(res.data);
+      } catch (e) {
+        setError(e.response?.data || "Unable to load dashboard");
+      }
+    };
+
+    if (restaurantId) load();
+  }, [restaurantId]);
+
+  if (!restaurantId) return <p style={{ padding: 20 }}>RestaurantId missing. Login as Manager.</p>;
+  if (error) return <p style={{ padding: 20, color: "red" }}>{error}</p>;
+  if (!summary) return <p style={{ padding: 20 }}>Loading...</p>;
+
   return (
     <div className="manager-dashboard">
-
-      {/* Header */}
       <div className="dashboard-header">
         <h1>Manager Dashboard</h1>
         <p>Today’s restaurant overview</p>
       </div>
 
-      {/* KPI Cards */}
       <div className="kpi-grid">
         <div className="kpi-card">
-          <h3>₹12,450</h3>
+          <h3>₹{summary.revenueToday}</h3>
           <p>Revenue Today</p>
         </div>
 
         <div className="kpi-card">
-          <h3>38</h3>
-          <p>Total Orders</p>
+          <h3>{summary.totalBookingsToday}</h3>
+          <p>Total Bookings</p>
         </div>
 
         <div className="kpi-card">
-          <h3>6</h3>
+          <h3>{summary.activeTables}</h3>
           <p>Active Tables</p>
         </div>
 
         <div className="kpi-card">
-          <h3>4.5 ⭐</h3>
+          <h3>{summary.averageRating} ⭐</h3>
           <p>Average Rating</p>
         </div>
       </div>
-
-      {/* Main Grid */}
-      <div className="dashboard-grid">
-
-        {/* Orders Status */}
-        <div className="dashboard-card">
-          <h2>Orders Status</h2>
-          <ul className="status-list">
-            <li>🟡 Pending: <strong>5</strong></li>
-            <li>🍳 Preparing: <strong>8</strong></li>
-            <li>🚚 Out for Delivery: <strong>6</strong></li>
-            <li>✅ Completed: <strong>19</strong></li>
-          </ul>
-        </div>
-
-        {/* Table Availability */}
-        <div className="dashboard-card">
-          <h2>Table Availability</h2>
-          <ul className="status-list">
-            <li>🟢 Available: <strong>10</strong></li>
-            <li>🔴 Occupied: <strong>6</strong></li>
-            <li>📅 Reserved: <strong>4</strong></li>
-          </ul>
-        </div>
-
-        {/* Top Selling Items */}
-        <div className="dashboard-card">
-          <h2>Top Selling Items</h2>
-          <ul className="simple-list">
-            <li>🍕 Margherita Pizza – 12 orders</li>
-            <li>🍔 Chicken Burger – 9 orders</li>
-            <li>🍝 Alfredo Pasta – 7 orders</li>
-            <li>🥗 Caesar Salad – 5 orders</li>
-          </ul>
-        </div>
-
-        {/* Staff on Duty */}
-        <div className="dashboard-card">
-          <h2>Staff On Duty</h2>
-          <ul className="simple-list">
-            <li>👨‍🍳 Chefs: 3</li>
-            <li>🧑‍🍽️ Waiters: 5</li>
-            <li>🧹 Cleaners: 2</li>
-            <li>📦 Delivery Staff: 4</li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Weekly Revenue */}
-      <div className="dashboard-card full-width">
-        <h2>Weekly Revenue Overview</h2>
-        <div className="revenue-bar">
-          <span style={{ height: "60%" }}>Mon</span>
-          <span style={{ height: "80%" }}>Tue</span>
-          <span style={{ height: "55%" }}>Wed</span>
-          <span style={{ height: "90%" }}>Thu</span>
-          <span style={{ height: "75%" }}>Fri</span>
-          <span style={{ height: "95%" }}>Sat</span>
-          <span style={{ height: "85%" }}>Sun</span>
-        </div>
-      </div>
-
     </div>
   );
 }

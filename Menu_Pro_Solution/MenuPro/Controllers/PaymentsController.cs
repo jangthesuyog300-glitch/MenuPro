@@ -29,5 +29,28 @@ namespace Hotel.Controllers
             => Ok(await _context.Payments
                 .Where(p => p.BookingId == bookingId)
                 .ToListAsync());
+
+
+
+        [HttpGet("restaurant/{restaurantId}")]
+        public async Task<IActionResult> GetByRestaurant(int restaurantId)
+        {
+            var data = await _context.Payments
+                .Where(p => p.Booking.RestaurantId == restaurantId)
+                .OrderByDescending(p => p.PaymentDate)
+                .Select(p => new
+                {
+                    id = p.PaymentId,
+                    bookingId = p.BookingId,
+                    customer = p.Booking.User.Name,
+                    amount = p.Amount,
+                    method = p.PaymentType,
+                    status = p.PaymentStatus,
+                    date = p.PaymentDate
+                })
+                .ToListAsync();
+
+            return Ok(data);
+        }
     }
 }

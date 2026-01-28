@@ -1,13 +1,26 @@
+import { useEffect, useState } from "react";
 import "../../Styles/Admin/AdminDashboard.css";
+import { getAdminStats } from "../../services/adminService";
 
 export default function AdminDashboard() {
-  // Dummy counts (later from API)
-  const stats = {
-    restaurants: 12,
-    managers: 12,
-    active: 10,
-    inactive: 2,
-  };
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setError("");
+        const data = await getAdminStats();
+        setStats(data);
+      } catch (e) {
+        setError(e.response?.data || "Failed to load stats");
+      }
+    };
+    load();
+  }, []);
+
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (!stats) return <p>Loading...</p>;
 
   return (
     <div className="admin-dashboard">

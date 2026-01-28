@@ -1,129 +1,64 @@
 import { useEffect, useState } from "react";
 import "../../Styles/manager/Bookings.css";
+import axiosInstance from "../../services/axiosInstance";
 
 export default function Bookings() {
+  const restaurantId = localStorage.getItem("restaurantId");
+
   const [bookings, setBookings] = useState([]);
-  const [logs, setLogs] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    setBookings([
-      {
-        id: 1,
-        name: "Rahul Sharma",
-        phone: "9876543210",
-        date: "2026-01-28",
-        time: "7:00 PM",
-        guests: 4,
-        tableNo: 5,
-        status: "Pending",
-        payment: "Unpaid",
-      },
-      {
-        id: 2,
-        name: "Amit Patil",
-        phone: "9123456780",
-        date: "2026-01-28",
-        time: "8:30 PM",
-        guests: 2,
-        tableNo: 2,
-        status: "Confirmed",
-        payment: "Paid",
-      },
-    ]);
-  }, []);
-
-  const updateStatus = (id, newStatus) => {
-    const booking = bookings.find((b) => b.id === id);
-
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
-    );
-
-    const newLog = {
-      bookingId: id,
-      name: booking.name,
-      action: newStatus,
-      time: new Date().toLocaleString(),
+    const load = async () => {
+      try {
+        setError("");
+        const res = await axiosInstance.get(`/bookings/restaurant/${restaurantId}`);
+        setBookings(res.data || []);
+      } catch (e) {
+        setError(e.response?.data || "Unable to load bookings");
+      }
     };
 
-    setLogs((prev) => [newLog, ...prev]);
+    if (restaurantId) load();
+  }, [restaurantId]);
+
+  const updateStatus = async (bookingId, newStatus) => {
+    try {
+      await axiosInstance.put(`/bookings/${bookingId}/status`, JSON.stringify(newStatus), {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      setBookings((prev) =>
+        prev.map((b) => (b.bookingId === bookingId ? { ...b, status: newStatus } : b))
+      );
+    } catch (e) {
+      alert(e.response?.data || "Failed to update status");
+    }
   };
+
+  if (!restaurantId) return <p style={{ padding: 20 }}>RestaurantId missing.</p>;
+  if (error) return <p style={{ padding: 20, color: "red" }}>{error}</p>;
 
   return (
     <div className="bookings-container">
-      <h1>Bookings Management</h1>
+      <h1>Bookings</h1>
 
-      {/* BOOKINGS TABLE */}
-      <table className="bookings-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Guests</th>
-            <th>Table</th>
-            <th>Status</th>
-            <th>Payment</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+      {bookings.map((b) => (
+        <div key={b.bookingId} className="booking-card">
+          <h3>{b.customerName}</h3>
+          <p>📞 {b.customerPhone}</p>
+          <p>📅 {new Date(b.bookingDate).toLocaleDateString()}</p>
+          <p>⏰ {b.time}</p>
+          <p>🪑 Table: {b.tableNo}</p>
+          <p>Status: <b>{b.status}</b></p>
+          <p>Payment: <b>{b.payment}</b></p>
 
-        <tbody>
-          {bookings.map((b) => (
-            <tr key={b.id}>
-              <td>{b.id}</td>
-              <td>{b.name}</td>
-              <td>{b.phone}</td>
-              <td>{b.date}</td>
-              <td>{b.time}</td>
-              <td>{b.guests}</td>
-              <td>{b.tableNo}</td>
-              <td className={b.status.toLowerCase()}>{b.status}</td>
-              <td>{b.payment}</td>
-              <td>
-                <button onClick={() => updateStatus(b.id, "Confirmed")}>
-                  Confirm
-                </button>
-                <button onClick={() => updateStatus(b.id, "Cancelled")}>
-                  Cancel
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* BOOKING LOG */}
-      <h2 style={{ marginTop: "40px" }}>Booking Activity Log</h2>
-
-      <table className="log-table">
-        <thead>
-          <tr>
-            <th>Booking ID</th>
-            <th>Customer</th>
-            <th>Action</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {logs.length === 0 ? (
-            <tr>
-              <td colSpan="4">No activity yet</td>
-            </tr>
-          ) : (
-            logs.map((log, index) => (
-              <tr key={index}>
-                <td>{log.bookingId}</td>
-                <td>{log.name}</td>
-                <td className={log.action.toLowerCase()}>{log.action}</td>
-                <td>{log.time}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+          <div className="booking-actions">
+            <button onClick={() => updateStatus(b.bookingId, "Confirmed")}>Confirm</button>
+            <button onClick={() => updateStatus(b.bookingId, "Cancelled")}>Cancel</button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -44,7 +44,55 @@ namespace Hotel.Controllers
         // =========================================================
         // 🟢 PUBLIC API – RESTAURANT DETAILS (NO LOGIN REQUIRED) ✅ FIX
         // =========================================================
-        [AllowAnonymous]
+        //[AllowAnonymous]
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetRestaurantById(int id)
+        //{
+        //    var restaurant = await _context.Restaurants
+        //        .Where(r => r.RestaurantId == id && r.IsActive)
+        //        .Select(r => new
+        //        {
+        //            r.RestaurantId,
+        //            r.Name,
+        //            r.Description,
+        //            r.Location,
+        //            r.City,
+        //            r.Rating,
+        //            r.TotalRatings,
+        //            r.PriceForTwo,
+        //            r.OpenTime,
+        //            r.CloseTime,
+        //            r.Phone,
+        //            r.ImagePath,
+
+        //            // ✅ No Restaurant navigation inside tables
+        //            Tables = r.Tables.Select(t => new
+        //            {
+        //                t.TableId,
+        //                t.RestaurantId,
+        //                t.TableNumber,
+        //                t.Capacity,
+        //                t.Status
+        //            }).ToList(),
+
+        //            // ✅ No Restaurant navigation inside food items
+        //            FoodItems = r.FoodItems.Select(f => new
+        //            {
+        //                f.FoodItemId,
+        //                f.RestaurantId,
+        //                f.FoodName,
+        //                f.Price,
+        //                f.IsAvailable
+        //            }).ToList()
+        //        })
+        //        .FirstOrDefaultAsync();
+
+        //    if (restaurant == null)
+        //        return NotFound("Restaurant not found");
+
+        //    return Ok(restaurant);
+        //}
+        [AllowAnonymous] // public details (optional)
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRestaurantById(int id)
         {
@@ -65,21 +113,17 @@ namespace Hotel.Controllers
                     r.Phone,
                     r.ImagePath,
 
-                    // ✅ No Restaurant navigation inside tables
                     Tables = r.Tables.Select(t => new
                     {
                         t.TableId,
-                        t.RestaurantId,
                         t.TableNumber,
                         t.Capacity,
                         t.Status
                     }).ToList(),
 
-                    // ✅ No Restaurant navigation inside food items
                     FoodItems = r.FoodItems.Select(f => new
                     {
                         f.FoodItemId,
-                        f.RestaurantId,
                         f.FoodName,
                         f.Price,
                         f.IsAvailable
@@ -87,11 +131,10 @@ namespace Hotel.Controllers
                 })
                 .FirstOrDefaultAsync();
 
-            if (restaurant == null)
-                return NotFound("Restaurant not found");
-
+            if (restaurant == null) return NotFound("Restaurant not found");
             return Ok(restaurant);
         }
+
 
 
         // =========================================================

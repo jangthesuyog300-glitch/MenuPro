@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Hotel
 {
@@ -18,16 +19,27 @@ namespace Hotel
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
             );
 
-            builder.Services.AddControllers();
+            // Controllers + JSON
+            builder.Services
+                .AddControllers()
+                .AddJsonOptions(o =>
+                {
+                    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                });
 
-            // CORS (Vite)
+            // ✅ CORS (Fix for NetworkError)
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowReact", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
+                    policy
+                        .SetIsOriginAllowed(origin =>
+                            origin.StartsWith("http://localhost:5173") ||
+                            origin.StartsWith("https://localhost:5173")
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                    // ❌ Removed AllowCredentials() (not needed for JWT localStorage)
                 });
             });
 
@@ -46,7 +58,10 @@ namespace Hotel
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key missing"))
+                            Encoding.UTF8.GetBytes(
+                                builder.Configuration["Jwt:Key"]
+                                ?? throw new InvalidOperationException("Jwt:Key missing")
+                            )
                         )
                     };
                 });
@@ -79,9 +94,9 @@ namespace Hotel
                     }
                 });
             });
-            
 
             var app = builder.Build();
+
             app.UseStaticFiles();
 
             if (app.Environment.IsDevelopment())
@@ -90,16 +105,19 @@ namespace Hotel
                 app.UseSwaggerUI();
             }
 
+            // Keep HTTPS redirection if backend runs on HTTPS
             app.UseHttpsRedirection();
+
             app.UseRouting();
 
-            // CORS before auth
+            // ✅ CORS before auth
             app.UseCors("AllowReact");
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
+
             app.Run();
         }
     }

@@ -1,48 +1,39 @@
 import { useEffect, useState } from "react";
 import "../../Styles/manager/Tables.css";
+import axiosInstance from "../../services/axiosInstance";
 
 export default function Tables() {
+  const restaurantId = localStorage.getItem("restaurantId");
   const [tables, setTables] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    setTables([
-      { id: 1, seats: 4, status: "Available" },
-      { id: 2, seats: 2, status: "Occupied" },
-      { id: 3, seats: 6, status: "Reserved" },
-      { id: 4, seats: 4, status: "Available" },
-      { id: 5, seats: 8, status: "Occupied" },
-      { id: 6, seats: 2, status: "Available" },
-    ]);
-  }, []);
+    const load = async () => {
+      try {
+        setError("");
+        const res = await axiosInstance.get(`/tables/restaurant/${restaurantId}`);
+        setTables(res.data || []);
+      } catch (e) {
+        setError(e.response?.data || "Unable to load tables");
+      }
+    };
 
-  const updateStatus = (id, newStatus) => {
-    setTables((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
-    );
-  };
+    if (restaurantId) load();
+  }, [restaurantId]);
+
+  if (!restaurantId) return <p style={{ padding: 20 }}>RestaurantId missing.</p>;
+  if (error) return <p style={{ padding: 20, color: "red" }}>{error}</p>;
 
   return (
     <div className="tables-container">
       <h1>Restaurant Tables Management</h1>
 
       <div className="tables-grid">
-        {tables.map((table) => (
-          <div key={table.id} className={`table-card ${table.status.toLowerCase()}`}>
-            <h2>Table {table.id}</h2>
-            <p>Seats: {table.seats}</p>
-            <p className="status">{table.status}</p>
-
-            <div className="actions">
-              <button onClick={() => updateStatus(table.id, "Available")}>
-                Set Available
-              </button>
-              <button onClick={() => updateStatus(table.id, "Reserved")}>
-                Reserve
-              </button>
-              <button onClick={() => updateStatus(table.id, "Occupied")}>
-                Occupy
-              </button>
-            </div>
+        {tables.map((t) => (
+          <div key={t.id} className="table-card">
+            <h3>Table #{t.id}</h3>
+            <p>Seats: {t.seats}</p>
+            <p>Status: <b>{t.status}</b></p>
           </div>
         ))}
       </div>

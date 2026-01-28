@@ -18,7 +18,6 @@ export default function LoginModal({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🚫 Do not render if closed
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
@@ -33,24 +32,21 @@ export default function LoginModal({
         throw new Error("Token missing");
       }
 
-      // ✅ Save auth info
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
 
-      // ✅ Update AuthContext (expects TOKEN)
       login(data.token);
 
-      // ✅ Notify Navbar + close modal
       onLoginSuccess();
       onClose();
 
-      // ✅ Redirect by role
-      if (data.role === "Manager") {
-        navigate("/manager");
-      } else {
-        navigate("/");
-      }
-
+     if (data.role === "Admin") {
+  navigate("/admin");
+} else if (data.role === "Manager") {
+  navigate("/manager");
+} else {
+  navigate("/");
+}
     } catch (err) {
       setError("Invalid email or password");
     } finally {
@@ -61,14 +57,11 @@ export default function LoginModal({
   return (
     <div className="modal-overlay">
       <div className="login-modal">
-
-        {/* HEADER */}
         <div className="modal-header">
           <h3>Login</h3>
           <span className="close-btn" onClick={onClose}>×</span>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit}>
           {error && <p className="error-text">{error}</p>}
 
@@ -95,7 +88,6 @@ export default function LoginModal({
           </button>
         </form>
 
-        {/* FOOTER */}
         <div className="modal-footer">
           <p>
             <b>Don’t have an account?</b>{" "}
@@ -104,7 +96,6 @@ export default function LoginModal({
             </span>
           </p>
         </div>
-
       </div>
     </div>
   );

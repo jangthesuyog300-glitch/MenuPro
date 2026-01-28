@@ -23,11 +23,27 @@ namespace Hotel.Controllers
         }
 
         // ✅ Manager/Admin/User can view tables (needed for booking/dashboard)
-        [Authorize(Roles = "User,Manager,Admin")]
+        //[Authorize(Roles = "User,Manager,Admin")]
+        //[HttpGet("restaurant/{restaurantId}")]
+        //public async Task<IActionResult> GetByRestaurant(int restaurantId)
+        //    => Ok(await _context.Tables
+        //        .Where(t => t.RestaurantId == restaurantId)
+        //        .ToListAsync());
+        [Authorize(Roles = "Manager,Admin")]
         [HttpGet("restaurant/{restaurantId}")]
         public async Task<IActionResult> GetByRestaurant(int restaurantId)
-            => Ok(await _context.Tables
+        {
+            var data = await _context.Tables
                 .Where(t => t.RestaurantId == restaurantId)
-                .ToListAsync());
+                .Select(t => new
+                {
+                    id = t.TableId,
+                    seats = t.Capacity,
+                    status = t.Status
+                })
+                .ToListAsync();
+
+            return Ok(data);
+        }
     }
 }

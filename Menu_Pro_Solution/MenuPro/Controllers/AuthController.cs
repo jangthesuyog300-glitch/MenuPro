@@ -19,7 +19,6 @@ public class AuthController : ControllerBase
         _context = context;
         _config = config;
     }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
@@ -37,14 +36,25 @@ public class AuthController : ControllerBase
 
         var role = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role.Trim();
 
+        // ✅ normalize role (case-insensitive)
+        role = role.Equals("admin", StringComparison.OrdinalIgnoreCase) ? "Admin" :
+               role.Equals("manager", StringComparison.OrdinalIgnoreCase) ? "Manager" :
+               role.Equals("user", StringComparison.OrdinalIgnoreCase) ? "User" :
+               role;
+
         if (role != "User" && role != "Manager" && role != "Admin")
             return BadRequest("Role must be 'User', 'Manager' or 'Admin'");
 
-        // ✅ Manager/Admin must have RestaurantId
-        if (role == "Manager" || role == "Admin")
+        // ✅ RestaurantId required ONLY for Manager
+        if (role == "Manager")
         {
             if (dto.RestaurantId == null)
-                return BadRequest("RestaurantId is required for Manager/Admin");
+                return BadRequest("RestaurantId is required for Manager");
+        }
+        else
+        {
+            // ✅ User/Admin should not have RestaurantId
+            dto.RestaurantId = null;
         }
 
         var user = new User
@@ -53,7 +63,7 @@ public class AuthController : ControllerBase
             Email = email,
             Phone = dto.Phone.Trim(),
             Role = role,
-            RestaurantId = dto.RestaurantId,
+            RestaurantId = dto.RestaurantId, // Manager has value, User/Admin null
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
         };
 
@@ -62,6 +72,56 @@ public class AuthController : ControllerBase
 
         return Ok("User registered successfully");
     }
+
+
+    //[HttpPost("register")]
+    //public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    //{
+    //    if (dto == null) return BadRequest("Invalid payload");
+
+    //    if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("Name is required");
+    //    if (string.IsNullOrWhiteSpace(dto.Email)) return BadRequest("Email is required");
+    //    if (string.IsNullOrWhiteSpace(dto.Phone)) return BadRequest("Phone is required");
+    //    if (string.IsNullOrWhiteSpace(dto.Password)) return BadRequest("Password is required");
+
+    //    var email = dto.Email.Trim().ToLowerInvariant();
+
+    //    if (await _context.Users.AnyAsync(u => u.Email.ToLower() == email))
+    //        return BadRequest("Email already exists");
+
+    //    var role = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role.Trim();
+
+    //    if (role != "User" && role != "Manager" && role != "Admin")
+    //        return BadRequest("Role must be 'User', 'Manager' or 'Admin'");
+
+    //    // ✅ RestaurantId required ONLY for Manager
+    //    if (role == "Manager")
+    //    {
+    //        if (dto.RestaurantId == null)
+    //            return BadRequest("RestaurantId is required for Manager");
+    //    }
+    //    else
+    //    {
+    //        // ✅ User/Admin should not have RestaurantId
+    //        dto.RestaurantId = null;
+    //    }
+
+    //    var user = new User
+    //    {
+    //        Name = dto.Name.Trim(),
+    //        Email = email,
+    //        Phone = dto.Phone.Trim(),
+    //        Role = role,
+    //        RestaurantId = dto.RestaurantId, // Manager has value, User/Admin null
+    //        PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+    //    };
+
+    //    _context.Users.Add(user);
+    //    await _context.SaveChangesAsync();
+
+    //    return Ok("User registered successfully");
+    //}
+
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
@@ -92,12 +152,21 @@ public class AuthController : ControllerBase
 
     private string GenerateJwtToken(User user)
     {
-        var claims = new[]
+        var claims = new List<Claim>
+    {
+        new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // ✅ helpful for User.Identity
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, user.Role),
+        new Claim(ClaimTypes.Name, user.Name) // ✅ helps display name
+    };
+
+        // ✅ IMPORTANT: Add RestaurantId claim for Manager/Admin
+        if (user.RestaurantId.HasValue)
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
-        };
+            claims.Add(new Claim("restaurantId", user.RestaurantId.Value.ToString()));
+        }
 
         var keyString = _config["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key missing");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
@@ -117,4 +186,5 @@ public class AuthController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 }

@@ -1,25 +1,57 @@
 import { useEffect, useState } from "react";
-import data from "../../JSON/restaurants.json"; 
 import "../../Styles/Admin/AdminRestaurent.css";
+import {
+  getAdminRestaurants,
+  toggleRestaurantStatus
+} from "../../services/adminService";
 
 export default function AdminRestaurant() {
   const [restaurants, setRestaurants] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const load = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const data = await getAdminRestaurants();
+      setRestaurants(data || []);
+    } catch (e) {
+      setError(e.response?.data || "Failed to load restaurants");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setRestaurants(data);
+    load();
   }, []);
 
-  const toggleStatus = (id) => {
-    setRestaurants((prev) =>
-      prev.map((r) =>
-        r.restaurantId === id ? { ...r, isActive: !r.isActive } : r
-      )
-    );
+  const handleToggleStatus = async (id) => {
+    try {
+      setError("");
+
+      // optimistic UI update
+      setRestaurants((prev) =>
+        prev.map((r) =>
+          r.restaurantId === id ? { ...r, isActive: !r.isActive } : r
+        )
+      );
+
+      await toggleRestaurantStatus(id);
+    } catch (e) {
+      setError(e.response?.data || "Failed to update status");
+      // revert by reloading from server
+      load();
+    }
   };
 
   return (
     <div className="admin-restaurants">
       <h1>Restaurants Management</h1>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading && <p>Loading...</p>}
 
       <table className="restaurants-table">
         <thead>
@@ -27,10 +59,8 @@ export default function AdminRestaurant() {
             <th>ID</th>
             <th>Name</th>
             <th>City</th>
-            <th>Phone</th>
-            <th>Rating</th>
+            <th>Location</th>
             <th>Status</th>
-            <th>Price for Two</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -41,14 +71,12 @@ export default function AdminRestaurant() {
               <td>{r.restaurantId}</td>
               <td>{r.name}</td>
               <td>{r.city}</td>
-              <td>{r.phone}</td>
-              <td>{r.rating} ⭐</td>
+              <td>{r.location}</td>
               <td className={r.isActive ? "active" : "inactive"}>
                 {r.isActive ? "Active" : "Inactive"}
               </td>
-              <td>₹ {r.priceForTwo}</td>
               <td>
-                <button onClick={() => toggleStatus(r.restaurantId)}>
+                <button onClick={() => handleToggleStatus(r.restaurantId)}>
                   {r.isActive ? "Deactivate" : "Activate"}
                 </button>
               </td>

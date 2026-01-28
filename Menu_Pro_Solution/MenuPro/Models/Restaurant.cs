@@ -24,5 +24,8 @@
         public ICollection<Table> Tables { get; set; } = new List<Table>();
         public ICollection<FoodItem> FoodItems { get; set; } = new List<FoodItem>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+        // ✅ Restaurant Managers
+        public ICollection<User> Managers { get; set; } = new List<User>();
     }
 }
