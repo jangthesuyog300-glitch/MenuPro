@@ -1,111 +1,117 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../services/axiosInstance";
 
-export default function BookTableForm({ onBook }) {
+export default function BookingForm({ restaurantId, onBook }) {
+  const [slots, setSlots] = useState([]);
+  const [tables, setTables] = useState([]);
+  const [slotId, setSlotId] = useState("");
+  const [tableId, setTableId] = useState("");
+  const [error, setError] = useState("");
+  const [tablesLoaded, setTablesLoaded] = useState(false);
 
-  const today = new Date().toISOString().split("T")[0];
+  // ✅ PUBLIC – load timeslots
+  useEffect(() => {
+    axiosInstance
+      .get(`/timeslots/restaurant/${restaurantId}`)
+      .then(r => setSlots(r.data))
+      .catch(() => setError("Failed to load time slots"));
+  }, [restaurantId]);
 
-  const [people, setPeople] = useState(2);
-  const [customPeople, setCustomPeople] = useState("");
-  const [date, setDate] = useState(today);
-  const [startTime, setStartTime] = useState("12:00");
-  const [endTime, setEndTime] = useState("13:00");
+  // const handleBook = async () => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     setError("Please login first to continue booking.");
+  //     return;
+  //   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  //   if (!tablesLoaded) {
+  //     const res = await axiosInstance.get(`/tables/restaurant/${restaurantId}`);
+  //     setTables(res.data);
+  //     setTablesLoaded(true);
+  //     setError("Tables loaded. Please select one.");
+  //     return;
+  //   }
+
+  //   if (!tableId) {
+  //     setError("Please select a table.");
+  //     return;
+  //   }
+
+  //   onBook({ tableId, slotId });
+  // };
+
+
+  const handleBook = async () => {
+    const token = localStorage.getItem("token");
+    if (!token || token === "undefined" || token === "null") {
+      setError("Please login first to continue booking.");
+      return;
+    }
+
+    if (!tablesLoaded) {
+      const res = await axiosInstance.get(`/tables/restaurant/${restaurantId}`);
+      setTables(res.data);
+      setTablesLoaded(true);
+      setError("Tables loaded. Please select one.");
+      return;
+    }
+
+    if (!slotId) {
+      setError("Please select a time slot.");
+      return;
+    }
+
+    if (!tableId) {
+      setError("Please select a table.");
+      return;
+    }
+
+    const bookingDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
     onBook({
-      people: people === "custom" ? customPeople : people,
-      date,
-      startTime,
-      endTime,
+      tableId: Number(tableId),
+      timeSlotId: Number(slotId),
+      bookingDate,
     });
   };
 
-  const getTimeLabel = (time) => {
-    const hour = parseInt(time.split(":")[0], 10);
-    return hour >= 18 || hour < 6 ? "🌙 Night" : "🌞 Day";
-  };
+
 
   return (
-    <div className="book-form">
-      <h3>Book a Table</h3>
+    <>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <form onSubmit={handleSubmit}>
+      {/* ✅ Time slot select: add value */}
+      <select value={slotId} onChange={(e) => setSlotId(e.target.value)}>
+        <option value="">Select Time Slot</option>
+        {slots.map((s) => (
+          <option key={s.timeSlotId} value={s.timeSlotId}>
+            {s.startTime} - {s.endTime}
+          </option>
+        ))}
+      </select>
 
-        {/* PEOPLE SELECTOR */}
-        <label>Number of People</label>
-        <div className="people-scroll">
+      {/* ✅ Table select: add value + fix default option value */}
+      <select
+        value={tableId}
+        disabled={!tablesLoaded}
+        onChange={(e) => setTableId(e.target.value)}
+      >
+        <option value="">
+          {!tablesLoaded ? "Login required (click Book/Pay)" : "Select Table"}
+        </option>
 
-          {[...Array(15)].map((_, i) => {
-            const num = i + 1;
-            return (
-              <button
-                key={num}
-                type="button"
-                className={`people-pill ${people === num ? "active" : ""}`}
-                onClick={() => setPeople(num)}
-              >
-                {num}
-              </button>
-            );
-          })}
+        {tables.map((t) => (
+          <option key={t.tableId ?? t.id} value={t.tableId ?? t.id}>
+            Table {t.tableId ?? t.id} ({t.seats} seats)
+          </option>
+        ))}
+      </select>
 
-          <button
-            type="button"
-            className={`people-pill ${people === "custom" ? "active" : ""}`}
-            onClick={() => setPeople("custom")}
-          >
-            15+
-          </button>
-
-        </div>
-
-        {/* CUSTOM PEOPLE INPUT */}
-        {people === "custom" && (
-          <input
-            type="number"
-            min="16"
-            placeholder="Enter number of people"
-            value={customPeople}
-            onChange={(e) => setCustomPeople(e.target.value)}
-            required
-          />
-        )}
-
-        {/* DATE */}
-        <label>Date</label>
-        <input
-          type="date"
-          value={date}
-          min={today}
-          onChange={(e) => setDate(e.target.value)}
-          required
-        />
-
-        {/* START TIME */}
-        <label>
-          Start Time <span className="time-label">{getTimeLabel(startTime)}</span>
-        </label>
-        <input
-          type="time"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-          required
-        />
-
-        {/* END TIME */}
-        <label>
-          End Time <span className="time-label">{getTimeLabel(endTime)}</span>
-        </label>
-        <input
-          type="time"
-          value={endTime}
-          onChange={(e) => setEndTime(e.target.value)}
-          required
-        />
-
-        <button type="submit">Book Table</button>
-      </form>
-    </div>
+      <button onClick={handleBook}>
+        {tablesLoaded ? "Continue to Pay" : "Book / Pay"}
+      </button>
+    </>
   );
+
 }

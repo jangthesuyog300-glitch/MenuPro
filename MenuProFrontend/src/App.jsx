@@ -13,6 +13,7 @@ import MyRestaurant from "./Components/manager/MyRestaurant.jsx";
 import Payments from "./Components/manager/Payments.jsx";
 import Tables from "./Components/manager/Tables.jsx";
 
+import HistoryPage from "./HeroSection/History.jsx";
 import AboutUs from "./HeroSection/Aboutus.jsx";
 import Homepage from "./HeroSection/Homepage.jsx";
 
@@ -38,6 +39,8 @@ export default function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/restaurant/:id/book" element={<BookTablePage />} />
+          <Route path="/history/:id" element={<HistoryPage />} />
+          
 
           {/* ================= MANAGER ROUTES ================= */}
           <Route path="/manager" element={<ManagerLayout />}>

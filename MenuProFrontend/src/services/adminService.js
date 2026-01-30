@@ -33,3 +33,9 @@ export const getAdminStats = async () => {
   const res = await axiosInstance.get("/admin/stats");
   return res.data;
 };
+
+// =================ADD RESTAURANTS =================
+export const createRestaurant = async (payload) => {
+  const res = await axiosInstance.post("/restaurants", payload);
+  return res.data;
+};

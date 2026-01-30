@@ -1,4 +1,6 @@
-﻿using Hotel.Models;
+﻿using Hotel.DTOs;
+using Hotel.Models;
+using MenuPro.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,25 +17,22 @@ namespace Hotel.Controllers
         // ✅ Only Admin can add tables
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Add(Table table)
+        public async Task<IActionResult> Add([FromBody] Table table)
         {
             _context.Tables.Add(table);
             await _context.SaveChangesAsync();
             return Ok(table);
         }
 
-        // ✅ Manager/Admin/User can view tables (needed for booking/dashboard)
-        //[Authorize(Roles = "User,Manager,Admin")]
-        //[HttpGet("restaurant/{restaurantId}")]
-        //public async Task<IActionResult> GetByRestaurant(int restaurantId)
-        //    => Ok(await _context.Tables
-        //        .Where(t => t.RestaurantId == restaurantId)
-        //        .ToListAsync());
-        [Authorize(Roles = "Manager,Admin")]
+        //Manager/Admin can view tables for a restaurant
+        //Users can view tables to book
+
+
+        [Authorize]
         [HttpGet("restaurant/{restaurantId}")]
         public async Task<IActionResult> GetByRestaurant(int restaurantId)
         {
-            var data = await _context.Tables
+            var tables = await _context.Tables
                 .Where(t => t.RestaurantId == restaurantId)
                 .Select(t => new
                 {
@@ -43,7 +42,8 @@ namespace Hotel.Controllers
                 })
                 .ToListAsync();
 
-            return Ok(data);
+            return Ok(tables);
         }
     }
+
 }

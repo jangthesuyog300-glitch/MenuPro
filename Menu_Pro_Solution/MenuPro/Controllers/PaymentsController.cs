@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Controllers
 {
-    [Authorize(Roles = "User,Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     [ApiController]
     [Route("api/payments")]
     public class PaymentsController : ControllerBase
@@ -13,14 +13,33 @@ namespace Hotel.Controllers
         private readonly AppDbContext _context;
         public PaymentsController(AppDbContext context) => _context = context;
 
-        [HttpPost]
-        public async Task<IActionResult> Pay(Payment payment)
+        // ✅ DTO to avoid naming conflicts / overposting
+        public class CreatePaymentDto
         {
-            payment.PaymentStatus = "Success";
-            payment.PaymentDate = DateTime.UtcNow;
+            public int BookingId { get; set; }
+            public decimal Amount { get; set; }
+            public string PaymentType { get; set; } = "RazorpayDemo"; // ✅ matches your projection (PaymentType)
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Pay([FromBody] CreatePaymentDto dto)
+        {
+            // ✅ Validate booking exists
+            var bookingExists = await _context.Bookings.AnyAsync(b => b.BookingId == dto.BookingId);
+            if (!bookingExists) return BadRequest("Invalid BookingId");
+
+            var payment = new Payment
+            {
+                BookingId = dto.BookingId,
+                Amount = dto.Amount,
+                PaymentType = dto.PaymentType,     // ✅ use PaymentType (not paymentMethod)
+                PaymentStatus = "Success",
+                PaymentDate = DateTime.UtcNow
+            };
 
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
+
             return Ok(payment);
         }
 
@@ -30,8 +49,7 @@ namespace Hotel.Controllers
                 .Where(p => p.BookingId == bookingId)
                 .ToListAsync());
 
-
-
+        [Authorize(Roles = "Manager,Admin")] // ✅ manager dashboard needs access
         [HttpGet("restaurant/{restaurantId}")]
         public async Task<IActionResult> GetByRestaurant(int restaurantId)
         {

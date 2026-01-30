@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MenuPro.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260128073611_initialcreate")]
-    partial class initialcreate
+    [Migration("20260130083626_Restro")]
+    partial class Restro
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -288,6 +288,8 @@ namespace MenuPro.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("RestaurantId");
+
                     b.ToTable("Users");
                 });
 
@@ -378,6 +380,16 @@ namespace MenuPro.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("Hotel.Models.User", b =>
+                {
+                    b.HasOne("Hotel.Models.Restaurant", "Restaurant")
+                        .WithMany("Managers")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("Hotel.Models.Booking", b =>
                 {
                     b.Navigation("BookingFoods");
@@ -395,6 +407,8 @@ namespace MenuPro.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("FoodItems");
+
+                    b.Navigation("Managers");
 
                     b.Navigation("Tables");
                 });

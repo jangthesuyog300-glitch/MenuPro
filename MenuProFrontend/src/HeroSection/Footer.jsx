@@ -8,7 +8,7 @@ export default function Footer() {
   
           {/* BRAND / ABOUT */}
           <div className="footer-section">
-            <h4 className="footer-title">🍽️ RestaurantApp</h4>
+            <h4 className="footer-title">🍽️ Menu Pro</h4>
             <p className="footer-text">
               A smart restaurant management system to manage orders, tables,
               inventory and staff efficiently.

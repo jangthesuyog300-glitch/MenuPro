@@ -18,11 +18,110 @@
 }
 
 /* ===============================
-   PAGE TITLE
+   PAGE
    =============================== */
+.admin-managers {
+  padding: 28px;
+  background: var(--bg-page);
+  color: var(--text-normal);
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* PAGE TITLE */
 .admin-managers h1 {
-  margin-bottom: 20px;
+  margin: 0 0 18px 0;
+  font-size: 28px;
+  font-weight: 800;
   color: var(--text-primary);
+}
+
+/* error/loading */
+.admin-managers p {
+  margin: 10px 0;
+}
+
+/* ===============================
+   FORM CARD
+   =============================== */
+.add-manager-form {
+  background: var(--bg-panel);
+  border: 1px solid rgba(255, 107, 107, 0.18);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 18px;
+}
+
+.add-manager-form h3 {
+  margin: 0 0 14px 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--accent-rating);
+}
+
+/* form grid */
+.add-manager-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.add-manager-form h3 {
+  grid-column: 1 / -1;
+}
+
+.add-manager-form button {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 800px) {
+  .add-manager-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* inputs/select inside form ONLY */
+.add-manager-form input,
+.add-manager-form select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 107, 107, 0.28);
+  background: rgba(30, 30, 30, 0.7);
+  color: var(--text-normal);
+  font-size: 14px;
+  outline: none;
+}
+
+.add-manager-form input::placeholder {
+  color: rgba(181, 181, 181, 0.85);
+}
+
+.add-manager-form input:focus,
+.add-manager-form select:focus {
+  border-color: rgba(255, 107, 107, 0.75);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+}
+
+/* submit button in form */
+.add-manager-form button[type="submit"] {
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  color: #1a0f0f;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-rating));
+  transition: all 0.25s ease;
+}
+
+.add-manager-form button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
 }
 
 /* ===============================
@@ -30,86 +129,73 @@
    =============================== */
 .managers-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--bg-panel);
   color: var(--text-normal);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 107, 107, 0.18);
 }
 
+/* table head */
 .managers-table thead {
   background: var(--bg-panel-soft);
-  color: var(--text-muted);
 }
 
-.managers-table th,
+.managers-table th {
+  padding: 12px;
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255, 107, 107, 0.18);
+}
+
+/* table cells */
 .managers-table td {
   padding: 12px;
-  border-top: 1px solid rgba(255, 107, 107, 0.3);
-  text-align: center;
+  border-bottom: 1px solid rgba(255, 107, 107, 0.12);
   font-size: 14px;
-}
-
-.managers-table tbody tr:hover {
-  background: var(--bg-panel-soft);
-}
-
-/* ===============================
-   STATUS
-   =============================== */
-.active {
-  color: var(--accent-rating);
-  font-weight: 600;
-}
-
-.inactive {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-/* ===============================
-   INPUT
-   =============================== */
-input {
-  padding: 6px;
-  width: 80px;
-  text-align: center;
-
-  background: var(--bg-page);
   color: var(--text-normal);
-
-  border-radius: 6px;
-  border: 1px solid rgba(255, 107, 107, 0.4);
 }
 
-input:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
+/* hover row */
+.managers-table tbody tr:hover {
+  background: rgba(55, 55, 55, 0.65);
 }
 
-/* ===============================
-   BUTTON
-   =============================== */
-button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
+/* Actions column button */
+.managers-table button {
+  padding: 8px 10px;
+  border-radius: 10px;
   cursor: pointer;
-
-  background: linear-gradient(
-    135deg,
-    var(--accent-primary),
-    var(--accent-rating)
-  );
-
-  color: #1a0f0f;
-  font-weight: 600;
-  transition: all 0.25s ease;
+  font-weight: 800;
+  border: 1px solid rgba(255, 107, 107, 0.35);
+  background: rgba(255, 107, 107, 0.12);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
 }
 
-button:hover {
-  transform: translateY(-1px);
+.managers-table button:hover {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-rating));
+  color: #1a0f0f;
   box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+/* Mobile table scroll */
+@media (max-width: 760px) {
+  .managers-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .managers-table th,
+  .managers-table td {
+    min-width: 130px;
+  }
 }

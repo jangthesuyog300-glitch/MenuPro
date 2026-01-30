@@ -2,7 +2,7 @@ import { useState } from "react";
 import "../Styles/Register.css";
 import { registerUser } from "../services/authService";
 
-export default function RegisterModal({ isOpen, onClose }) {
+export default function RegisterModal({ isOpen, onClose, onLoginClick }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -40,6 +40,9 @@ export default function RegisterModal({ isOpen, onClose }) {
       return;
     }
 
+
+    if (typeof onClose === "function") onClose();
+
     try {
       await registerUser(formData);
       onClose();
@@ -51,8 +54,16 @@ export default function RegisterModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" >
       <div className="login-modal">
+
+        <div className="modal-header" onClick={onClose}>
+          <h3>Login</h3>
+          <span className="close-btn" onClick={onClose}>
+            ×
+          </span>
+        </div>
+
         <h3>Register</h3>
 
         {error && <p className="error-text">{error}</p>}
@@ -63,11 +74,11 @@ export default function RegisterModal({ isOpen, onClose }) {
           <input name="phone" placeholder="Phone" onChange={handleChange} required />
           <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
 
-          <select name="role" value={formData.role} onChange={handleChange}>
+          {/* <select name="role" value={formData.role} onChange={handleChange}>
             <option value="User">User</option>
             <option value="Manager">Manager</option>
             <option value="Admin">Admin</option>
-          </select>
+          </select> */}
 
           {formData.role === "Manager" && (
             <input
@@ -79,10 +90,20 @@ export default function RegisterModal({ isOpen, onClose }) {
             />
           )}
 
-          <button disabled={loading}>
+          <button className="register-btn" disabled={loading}>
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
+
+
+        <div className="modal-footer">
+          <p>
+            <b>Don’t have an account?</b>{" "}
+            <span className="login-link" onClick={onLoginClick}>
+              Register
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );

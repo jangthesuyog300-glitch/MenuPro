@@ -1,40 +1,69 @@
+import "../Styles/Card.css";
 import { useNavigate } from "react-router-dom";
-import "../Styles/RestaurantCard.css";
+import axiosInstance from "../services/axiosInstance";
 
-export default function RestaurantCard({ restaurant }) {
+export default function RestaurantCard({
+  id,
+  name,
+  location,
+  rating,
+  isActive,
+  imagePath,
+}) {
   const navigate = useNavigate();
 
-  return (
-    <div
-      className="restaurant-card"
-      onClick={() => navigate(`/restaurant/${restaurant.restaurantId}`)}
-    >
-      {/* IMAGE */}
-      <div className="image-wrapper">
-        <img
-          src={`/${restaurant.imagePath}`}
-          alt={restaurant.name}
-        />
+  if (!id) return null;
 
-        <span className="rating-badge">
-          ⭐ {restaurant.rating}
+  const handleRestaurantClick = async () => {
+    const token = localStorage.getItem("token");
+
+    // ✅ Always store selected restaurant
+    localStorage.setItem("selectedRestaurantId", String(id));
+
+    // 🚶 If not logged in → just navigate
+    if (!token || token === "undefined" || token === "null") {
+      console.warn("⚠️ No token found. Skipping DB save.");
+      navigate(`/restaurant/${id}`);
+      return;
+    }
+
+    // 🔐 Logged in → save selection to backend
+    try {
+      await axiosInstance.put("/users/me/restaurant", {
+        restaurantId: id,
+      });
+      console.log("✅ Selected restaurant saved to backend:", id);
+    } catch (err) {
+      console.error(
+        "❌ Failed to save selected restaurant:",
+        err.response?.status,
+        err.response?.data
+      );
+    }
+
+    navigate(`/restaurant/${id}`);
+  };
+
+  return (
+    <div className="restaurant-card" onClick={handleRestaurantClick}>
+      <div className="restaurant-image">
+        <img
+          src={`https://localhost:44315/${imagePath}`.replace(
+            "44315//",
+            "44315/"
+          )}
+          alt={name}
+        />
+        <span className={`status-badge ${isActive ? "active" : "inactive"}`}>
+          {isActive ? "Open" : "Closed"}
         </span>
       </div>
 
-      {/* INFO */}
-      <div className="card-info">
-        <h3>{restaurant.name}</h3>
-
-        <p className="cuisines">
-          {restaurant.cuisines?.slice(0, 3).join(", ")}
-        </p>
-
-        <p className="location">
-          📍 {restaurant.city}
-        </p>
-
-        <div className="price-row">
-          <span>₹{restaurant.priceForTwo} for two</span>
+      <div className="restaurant-content">
+        <h3 className="restaurant-name">{name}</h3>
+        <p className="restaurant-location">📍 {location}</p>
+        <div className="restaurant-footer">
+          <span className="restaurant-rating">⭐ {rating}</span>
         </div>
       </div>
     </div>

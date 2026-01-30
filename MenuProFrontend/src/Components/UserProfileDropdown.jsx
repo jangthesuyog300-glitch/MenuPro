@@ -1,14 +1,20 @@
 import { useState } from "react";
 import "../Styles/UserProfileDropdown.css";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfileDropdown() {
   const [open, setOpen] = useState(false);
 
-  const userName = localStorage.getItem("userName") || "User";
+  const userName = localStorage.getItem("name") || "User";
   const email = localStorage.getItem("email");
 
+  const navigate = useNavigate();
+
+
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.clear(); 
+    // ✅ redirect to base URL 
+    navigate("/"); 
     window.location.reload(); // simple & safe for now
   };
 

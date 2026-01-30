@@ -1,3 +1,4 @@
+// ✅ src/pages/BookTablePage.jsx (FULL COPY-PASTE)
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import BookTableForm from "../Components/Booking/BookingForm";
@@ -18,7 +19,26 @@ export default function BookTablePage() {
 
   if (!id) return <h1 style={{ color: "red" }}>Restaurant ID missing in URL</h1>;
 
-  const userId = localStorage.getItem("userId"); // ✅ set this on login
+  // ✅ must be set at login
+  const token = localStorage.getItem("token");
+  // const userIdRaw = localStorage.getItem("userId");
+
+  // const isLoggedIn =
+  //   token && token !== "undefined" && token !== "null" && token.trim() !== "";
+
+
+  const getUserIdFromToken = (token) => {
+    if (!token || token === "undefined" || token === "null") return null;
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload?.sub ? Number(payload.sub) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const userId = getUserIdFromToken(token);
+
 
   const [menu, setMenu] = useState([]);
   const [cart, setCart] = useState([]);
@@ -26,6 +46,13 @@ export default function BookTablePage() {
   const [showPayment, setShowPayment] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // ✅ If userId missing -> redirect to login
+  useEffect(() => {
+    if (!userId) {
+      navigate("/login");
+    }
+  }, [userId, navigate]);
 
   // 🍽 Fetch Menu
   useEffect(() => {
@@ -41,7 +68,9 @@ export default function BookTablePage() {
     setCart((prev) => {
       const found = prev.find((i) => i.id === item.id);
       if (found) {
-        return prev.map((i) => (i.id === item.id ? { ...i, qty: i.qty + 1 } : i));
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, qty: i.qty + 1 } : i
+        );
       }
       return [...prev, { ...item, qty: 1 }];
     });
@@ -61,31 +90,31 @@ export default function BookTablePage() {
     setCart((prev) => prev.filter((i) => i.id !== itemId));
   };
 
-  // 📅 Booking Form submit (table selection + timeslot selection should come from BookTableForm)
+  // 📅 Booking submit
   const handleBooking = (bookingData) => {
     const tableBookingCharge = 100; // ₹100 fixed table charge
+
     setBookingDraft({
       ...bookingData,
       restaurantId: Number(id),
       userId: Number(userId),
       tableCharge: tableBookingCharge,
     });
+
     setShowPayment(true);
   };
 
-  // ✅ Save booking + foods + payment after Razorpay success
-  const handlePaymentSuccess = async (paymentInfo) => {
-    // paymentInfo optional: { paymentId, razorpayOrderId, etc } - depending on your Razorpay component
+  // ✅ After Payment success callback
+  const handlePaymentSuccess = async () => {
     if (!bookingDraft) return;
 
     try {
       setSaving(true);
 
-      // 1) Calculate totals
       const foodTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
       const totalAmount = foodTotal + (bookingDraft.tableCharge || 0);
 
-      // 2) Create Booking
+      // 1) Create Booking
       const createdBooking = await createBooking({
         userId: bookingDraft.userId,
         restaurantId: bookingDraft.restaurantId,
@@ -96,17 +125,17 @@ export default function BookTablePage() {
         bookingAmount: totalAmount,
       });
 
-      // 3) Save BookingFoods
+      // 2) Save BookingFoods
       for (const item of cart) {
         await addBookingFood({
           bookingId: createdBooking.bookingId,
-          foodItemId: item.id,     // must be FoodItemId
+          foodItemId: item.id,
           quantity: item.qty,
           price: item.price,
         });
       }
 
-      // 4) Save Payment
+      // 3) Save Payment
       await createPayment({
         bookingId: createdBooking.bookingId,
         amount: totalAmount,
@@ -114,11 +143,17 @@ export default function BookTablePage() {
         paymentStatus: "Success",
         paymentDate: new Date().toISOString(),
       });
+// ==============================================================================================================
+      console.log("💳 Creating payment:", {
+        bookingId: createdBooking.bookingId,
+        amount: totalAmount,
+        paymentType: "Combined",
+        paymentStatus: "Success",
+        paymentDate: new Date().toISOString(),
+      });
 
-      // 5) Clear cart and go to history
       setCart([]);
       setShowPayment(false);
-
       navigate("/history");
     } catch (e) {
       console.error(e);
@@ -141,7 +176,7 @@ export default function BookTablePage() {
 
       {/* RIGHT: BOOKING */}
       <div className="booking-section">
-        <BookTableForm onBook={handleBooking} />
+        <BookTableForm restaurantId={Number(id)} onBook={handleBooking} />
       </div>
 
       {/* 🧾 CART DRAWER */}
@@ -160,13 +195,22 @@ export default function BookTablePage() {
         <RazorpayDemo
           booking={bookingDraft}
           cart={cart}
-          onSuccess={handlePaymentSuccess}
+          onSuccess={handlePaymentSuccess} // ✅ now works
           onCancel={() => setShowPayment(false)}
         />
       )}
 
       {saving && (
-        <div style={{ position: "fixed", bottom: 20, right: 20, background: "#000", color: "#fff", padding: 10 }}>
+        <div
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            background: "#000",
+            color: "#fff",
+            padding: 10,
+          }}
+        >
           Saving booking...
         </div>
       )}

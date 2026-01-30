@@ -1,3 +1,4 @@
+// src/components/LoginModal.jsx
 import { useState } from "react";
 import "../Styles/Login.css";
 import { loginUser } from "../services/authService";
@@ -9,6 +10,7 @@ export default function LoginModal({
   onClose,
   onRegisterClick,
   onLoginSuccess,
+  onForgotPasswordClick
 }) {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -26,40 +28,89 @@ export default function LoginModal({
     setLoading(true);
 
     try {
+      // const data = await loginUser(email, password);
+
+      // // store auth info
+      // localStorage.setItem("token", data.token);
+      // localStorage.setItem("role", data.role);
+
+
       const data = await loginUser(email, password);
 
-      if (!data || !data.token) {
-        throw new Error("Token missing");
+      console.log("LOGIN RESPONSE:", data);
+
+      // token might be named differently depending on backend
+      const token = data?.token || data?.accessToken || data?.jwt || data?.data?.token;
+
+      if (!token || token === "undefined" || token === "null") {
+        throw new Error("Login response did not include a valid token");
       }
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.role);
+      // clear old bad values
+      ["token", "role", "restaurantId"].forEach((k) => localStorage.removeItem(k));
 
-      login(data.token);
+      // store auth info
+      localStorage.setItem("token", token);
+      console.log("AFTER setItem token:", localStorage.getItem("token"));
 
-      onLoginSuccess();
-      onClose();
+      // localStorage.setItem("name", user.name);
+      // console.log("Usre Name :", localStorage.getItem("name"));
 
-     if (data.role === "Admin") {
-  navigate("/admin");
-} else if (data.role === "Manager") {
-  navigate("/manager");
-} else {
-  navigate("/");
-}
+      if (data?.role) localStorage.setItem("role", data.role);
+
+
+
+      if (data.restaurantId) {
+        localStorage.setItem("restaurantId", data.restaurantId);
+      } else {
+        localStorage.removeItem("restaurantId");
+      }
+
+      // update context
+      login({ userId: data.userId, token });
+      // login({ token, role, restaurantId });
+      localStorage.setItem("userId", String(data.userId));
+      console.log("USER ID : ", localStorage.getItem("userId"));
+      console.log("AFTER context login():", localStorage.getItem("token"));
+
+
+      // close modal + notify parent
+      if (typeof onLoginSuccess === "function") onLoginSuccess();
+      if (typeof onClose === "function") onClose();
+
+      // role-based navigation
+      if (data.role === "Admin") {
+        navigate("/admin");
+      } else if (data.role === "Manager") {
+        navigate("/manager/bookings");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
+      console.error("Login error:", err);
       setError("Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
+
+    try {
+      await registerUser(formData);
+      onClose();
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="login-modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="login-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Login</h3>
-          <span className="close-btn" onClick={onClose}>×</span>
+          <span className="close-btn" onClick={onClose}>
+            ×
+          </span>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -93,6 +144,14 @@ export default function LoginModal({
             <b>Don’t have an account?</b>{" "}
             <span className="register-link" onClick={onRegisterClick}>
               Register
+            </span>
+          </p>
+
+          {/* New Code to be added */}
+          <p>
+            <b>Forgot Password?</b>{" "}
+            <span className="register-link" onClick={onForgotPasswordClick}>
+              Reset Password
             </span>
           </p>
         </div>

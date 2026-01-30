@@ -21,43 +21,55 @@ export default function RestaurantDetails() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError("");
+    const fetchData = async () => {
+      if (!id) {
+        console.error(".......Id is not there.......")
+        return;
+      }
+      try {
+        setLoading(true);
+        setError("");
 
-      const res = await axiosInstance.get(`/restaurants/${id}`);
-      const r = res.data;
+        const res = await axiosInstance.get(`/restaurants/${id}`);
+        const r = res.data;
 
-      const menuData = (r.foodItems || []).map((f) => ({
-        id: f.foodItemId,
-        name: f.foodName,
-        price: f.price,
-        isAvailable: f.isAvailable,
-      }));
+        const menuData = (r.foodItems || []).map((f) => ({
+          id: f.foodItemId,
+          name: f.foodName,
+          price: f.price,
+          isAvailable: f.isAvailable,
+        }));
 
-      setRestaurant({
-        restaurantId: r.restaurantId,
-        name: r.name,
-        description: r.description,
-        location: r.city ? `${r.location}, ${r.city}` : r.location,
-        rating: r.rating,
-        imagePath: r.imagePath,
-        menu: menuData,
-        reviews: [],
-        photos: [],
-      });
+        const restaurantId = r.restaurantId ?? r.id;
 
-      setMenu(menuData);
-    } catch (err) {
-      setError(err.response?.data || "Failed to load restaurant data.");
-    } finally {
-      setLoading(false);
-    }
-  };
+        setRestaurant({
+          restaurantId,
+          name: r.name,
+          description: r.description,
+          location: r.city ? `${r.location}, ${r.city}` : r.location,
+          rating: r.rating,
+          imagePath: r.imagePath,
+          menu: menuData,
+          reviews: [],
+          photos: [],
+        });
 
-  fetchData();
-}, [id]);
+        setMenu(menuData);
+      } catch (err) {
+        console.error("Fetch restaurant failed:", err);
+        setError(
+          err.response?.data?.message ||
+          err.response?.data?.title ||
+          err.message ||
+          "Failed to load restaurant data."
+        )
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
 
   if (loading) return <p className="loading">Loading...</p>;
@@ -99,10 +111,10 @@ export default function RestaurantDetails() {
               onClick={() =>
                 navigator.share
                   ? navigator.share({
-                      title: restaurant.name,
-                      text: restaurant.description,
-                      url: window.location.href,
-                    })
+                    title: restaurant.name,
+                    text: restaurant.description,
+                    url: window.location.href,
+                  })
                   : alert("Sharing not supported")
               }
             >
