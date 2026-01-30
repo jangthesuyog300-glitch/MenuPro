@@ -79,7 +79,21 @@
     height: 220px;
     border-radius: 18px;
     margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
+
+
+
+  .title{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
 
   .homepage-title {
     font-size: 20px;
@@ -119,5 +133,26 @@
 @media (min-width: 1200px) {
   .restaurant-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .title{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    top: 35%;
+    left: 50%;
+    color: var(--text-primary);
+    transform: translate(-50%,-50%);
+  }
+
+  .title1{
+    font-size: 130px;
+    font-weight: 900;
+  }
+  
+  .title2{
+    font-size: 80px;
   }
 }

@@ -1,4 +1,5 @@
-﻿using Hotel.Models;
+﻿using Hotel.DTOs;
+using Hotel.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace Hotel.Controllers
         }
 
         // =========================================================
-        // 🟢 PUBLIC API – HOME PAGE (NO LOGIN REQUIRED)
+        //  PUBLIC API – HOME PAGE (NO LOGIN REQUIRED)
         // =========================================================
         [AllowAnonymous]
         [HttpGet("public")]
@@ -41,57 +42,7 @@ namespace Hotel.Controllers
             return Ok(restaurants);
         }
 
-        // =========================================================
-        // 🟢 PUBLIC API – RESTAURANT DETAILS (NO LOGIN REQUIRED) ✅ FIX
-        // =========================================================
-        //[AllowAnonymous]
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetRestaurantById(int id)
-        //{
-        //    var restaurant = await _context.Restaurants
-        //        .Where(r => r.RestaurantId == id && r.IsActive)
-        //        .Select(r => new
-        //        {
-        //            r.RestaurantId,
-        //            r.Name,
-        //            r.Description,
-        //            r.Location,
-        //            r.City,
-        //            r.Rating,
-        //            r.TotalRatings,
-        //            r.PriceForTwo,
-        //            r.OpenTime,
-        //            r.CloseTime,
-        //            r.Phone,
-        //            r.ImagePath,
-
-        //            // ✅ No Restaurant navigation inside tables
-        //            Tables = r.Tables.Select(t => new
-        //            {
-        //                t.TableId,
-        //                t.RestaurantId,
-        //                t.TableNumber,
-        //                t.Capacity,
-        //                t.Status
-        //            }).ToList(),
-
-        //            // ✅ No Restaurant navigation inside food items
-        //            FoodItems = r.FoodItems.Select(f => new
-        //            {
-        //                f.FoodItemId,
-        //                f.RestaurantId,
-        //                f.FoodName,
-        //                f.Price,
-        //                f.IsAvailable
-        //            }).ToList()
-        //        })
-        //        .FirstOrDefaultAsync();
-
-        //    if (restaurant == null)
-        //        return NotFound("Restaurant not found");
-
-        //    return Ok(restaurant);
-        //}
+       
         [AllowAnonymous] // public details (optional)
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRestaurantById(int id)
@@ -138,43 +89,36 @@ namespace Hotel.Controllers
 
 
         // =========================================================
-        // 🔴 ADMIN ONLY – CREATE RESTAURANT WITH IMAGE
+        //  ADMIN ONLY – CREATE RESTAURANT WITH IMAGE
         // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateRestaurant([FromForm] Restaurant restaurant, IFormFile? image)
+        public async Task<IActionResult> Create([FromBody] CreateRestaurantDto dto)
         {
-            if (image != null)
+            var restaurant = new Restaurant
             {
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
-
-                if (!allowedExtensions.Contains(extension))
-                    return BadRequest("Only JPG, JPEG, PNG allowed");
-
-                if (image.Length > 2 * 1024 * 1024)
-                    return BadRequest("Image size must be less than 2MB");
-
-                var folderPath = Path.Combine(_env.WebRootPath, "images/restaurants");
-                if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
-
-                var fileName = Guid.NewGuid() + extension;
-                var filePath = Path.Combine(folderPath, fileName);
-
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await image.CopyToAsync(stream);
-
-                restaurant.ImagePath = "/images/restaurants/" + fileName;
-            }
+                Name = dto.Name,
+                Description = dto.Description,
+                Location = dto.Location,
+                City = dto.City,
+                Rating = dto.Rating,
+                TotalRatings = dto.TotalRatings,
+                IsActive = dto.IsActive,
+                PriceForTwo = dto.PriceForTwo,
+                OpenTime = dto.OpenTime,
+                CloseTime = dto.CloseTime,
+                Phone = dto.Phone,
+                ImagePath = dto.ImagePath
+            };
 
             _context.Restaurants.Add(restaurant);
             await _context.SaveChangesAsync();
-
             return Ok(restaurant);
         }
 
+
         // =========================================================
-        // 🔴 ADMIN ONLY – GET ALL RESTAURANTS
+        //  ADMIN ONLY – GET ALL RESTAURANTS
         // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpGet]
@@ -184,7 +128,7 @@ namespace Hotel.Controllers
         }
 
         // =========================================================
-        // 🔴 ADMIN ONLY – ACTIVATE / DEACTIVATE RESTAURANT
+        //  ADMIN ONLY – ACTIVATE / DEACTIVATE RESTAURANT
         // =========================================================
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}/status")]

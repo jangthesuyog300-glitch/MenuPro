@@ -22,7 +22,10 @@ export default function Homepage() {
     <div className="homepage">
 
       <div className="top_part" >
-
+          <div className="title">
+            <h2 className="title2" >Welcome To</h2>
+            <h1 className="title1" >Menu Pro</h1>
+          </div>
       </div>
 
       <h2 className="homepage-title">Popular Restaurants Near You</h2>

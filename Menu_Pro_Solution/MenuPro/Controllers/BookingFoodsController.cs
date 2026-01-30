@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Hotel.Models;
+using MenuPro.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +35,7 @@ namespace Hotel.Controllers
         // ✅ POST: api/bookingfoods
         // Body: { bookingId, foodItemId, quantity }
         [HttpPost]
-        public async Task<ActionResult<BookingFood>> AddFoodToBooking([FromBody] BookingFoodCreateDto dto)
+        public async Task<ActionResult<BookingFood>> AddFoodToBooking([FromBody] MenuPro.DTOs.BookingFoodCreateDto dto)
         {
             if (dto.Quantity <= 0)
                 return BadRequest("Quantity must be greater than 0.");
@@ -117,3 +118,4 @@ namespace Hotel.Controllers
             return NoContent();
         }
     }
+}

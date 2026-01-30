@@ -1,44 +1,32 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../../Styles/manager/FoodMenu.css";
+import { useNavigate } from "react-router-dom";
 
 export default function FoodMenu() {
-  const [categories] = useState(["Starters", "Main Course"]);
+  const API_BASE = useMemo(() => "https://localhost:44315", []); // keep "" if same domain
+  const navigate = useNavigate();
 
-  // ✅ FOOD LIST WITH 2 DUMMY ITEMS (EXTENDED STRUCTURE)
-  const [foods, setFoods] = useState([
-    {
-      id: 1,
-      category: "Starters",
-      name: "Paneer Tikka",
-      price: 220,
-      ingredients: "Paneer, Spices, Butter",
-      calories: 320,
-      carbs: 18,
-      protein: 20,
-      fat: 22,
-      type: "Veg",
-      spice: "Medium",
-      image: "",
-      description: "Grilled paneer cubes with spices",
-      available: true
-    },
-    {
-      id: 2,
-      category: "Main Course",
-      name: "Paneer Butter Masala",
-      price: 260,
-      ingredients: "Paneer, Tomato, Butter, Cream",
-      calories: 420,
-      carbs: 30,
-      protein: 18,
-      fat: 28,
-      type: "Veg",
-      spice: "Mild",
-      image: "",
-      description: "Creamy tomato-based curry",
-      available: false
+  // ---------- Helpers ----------
+  const readRestaurantId = () =>
+    Number(localStorage.getItem("restaurantId") || 0);
+
+  const readRole = () => localStorage.getItem("role") || "";
+
+  const readErrorText = async (res) => {
+    try {
+      const text = await res.text();
+      return text && text.trim() ? text : `HTTP ${res.status}`;
+    } catch {
+      return `HTTP ${res.status}`;
     }
-  ]);
+  };
+
+  // ---------- State ----------
+  const [restaurantId, setRestaurantId] = useState(readRestaurantId());
+
+  const [categories] = useState(["Starters", "Main Course"]);
+  const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -56,52 +44,138 @@ export default function FoodMenu() {
     spice: "Medium",
     image: "",
     available: true,
-    description: ""
+    description: "",
+    restaurantId: restaurantId,
   };
 
   const [form, setForm] = useState(emptyForm);
 
-  // HANDLE INPUT
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value
-    });
-  };
+  // Keep form restaurantId updated
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, restaurantId }));
+  }, [restaurantId]);
 
-  // SAVE / UPDATE FOOD
-  const saveFood = () => {
-    if (!form.category || !form.name || !form.price) {
-      alert("Category, Food Name and Price are mandatory");
+  // ✅ Watch localStorage changes (login may set restaurantId after component mounts)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const rid = readRestaurantId();
+      setRestaurantId((prev) => (prev !== rid ? rid : prev));
+    }, 300);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // ✅ If manager but no restaurantId -> kick to login/home
+  useEffect(() => {
+    const role = readRole();
+    if (role === "Manager" && !restaurantId) {
+      // You can change the route if your login page is different
+      alert("RestaurantId missing. Please login again.");
+      navigate("/");
+    }
+  }, [restaurantId, navigate]);
+
+  // -----------------------------
+  // API <-> UI mapping
+  // -----------------------------
+  const mapFromApi = (item) => ({
+    id: item.foodItemId,
+    restaurantId: item.restaurantId ?? restaurantId,
+    name: item.foodName ?? "",
+    price: item.price ?? 0,
+    available: item.isAvailable ?? false,
+
+    // UI-only fields
+    category: "",
+    ingredients: "",
+    calories: "",
+    carbs: "",
+    protein: "",
+    fat: "",
+    type: "Veg",
+    spice: "Medium",
+    image: "",
+    description: "",
+  });
+
+  // ✅ Create payload (POST)
+  const mapToApiCreate = (uiItem) => ({
+    restaurantId: parseInt(uiItem.restaurantId, 10),
+    foodName: (uiItem.name || "").trim(),
+    price: parseFloat(uiItem.price),
+    isAvailable: !!uiItem.available,
+  });
+
+  // ✅ Update payload (PUT)
+  const mapToApiUpdate = (uiItem) => ({
+    foodName: (uiItem.name || "").trim(),
+    price: parseFloat(uiItem.price),
+    isAvailable: !!uiItem.available,
+  });
+
+  // -----------------------------
+  // Fetch foods (by restaurant)
+  // -----------------------------
+  const fetchFoods = async (rid) => {
+    if (!rid) {
+      setFoods([]);
       return;
     }
 
-    if (editId) {
-      setFoods(
-        foods.map((f) =>
-          f.id === editId ? { ...f, ...form } : f
-        )
-      );
-    } else {
-      setFoods([
-        ...foods,
-        { id: Date.now(), ...form }
-      ]);
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/fooditems/restaurant/${rid}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        const msg = await readErrorText(res);
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : [data];
+
+      setFoods(list.map(mapFromApi));
+    } catch (err) {
+      console.error("FETCH FOODS ERROR:", err);
+      alert(`Failed to load food items: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
-
-    resetForm();
   };
 
-  // DELETE FOOD
-  const deleteFood = (id) => {
-    if (!window.confirm("Delete this food item?")) return;
-    setFoods(foods.filter((f) => f.id !== id));
+  // ✅ IMPORTANT: Refetch when restaurantId changes
+  useEffect(() => {
+    if (!restaurantId) return;
+    fetchFoods(restaurantId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restaurantId]);
+
+  // -----------------------------
+  // Handlers
+  // -----------------------------
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  // EDIT FOOD
+  const openAddModal = () => {
+    if (!restaurantId) {
+      alert("RestaurantId missing. Please login again.");
+      return;
+    }
+    setEditId(null);
+    setForm({ ...emptyForm, restaurantId });
+    setShowModal(true);
+  };
+
   const editFood = (food) => {
-    setForm(food);
+    setForm({ ...food, restaurantId }); // enforce current restaurantId
     setEditId(food.id);
     setShowModal(true);
   };
@@ -109,25 +183,107 @@ export default function FoodMenu() {
   const resetForm = () => {
     setShowModal(false);
     setEditId(null);
-    setForm(emptyForm);
+    setForm({ ...emptyForm, restaurantId });
   };
 
+  // ✅ SAVE / UPDATE (API)
+  const saveFood = async () => {
+    if (!form.category || !form.name || !form.price) {
+      alert("Category, Food Name and Price are mandatory");
+      return;
+    }
+
+    if (!restaurantId) {
+      alert("RestaurantId missing. Please login again.");
+      return;
+    }
+
+    try {
+      if (editId) {
+        const payload = mapToApiUpdate(form);
+
+        console.log("PUT payload:", payload);
+
+        const res = await fetch(`${API_BASE}/api/fooditems/${editId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const msg = await readErrorText(res);
+          throw new Error(msg);
+        }
+
+        await fetchFoods(restaurantId);
+        resetForm();
+      } else {
+        const payload = mapToApiCreate({ ...form, restaurantId });
+
+        console.log("POST restaurantId(localStorage):", localStorage.getItem("restaurantId"));
+        console.log("POST payload:", payload);
+
+        const res = await fetch(`${API_BASE}/api/fooditems`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const msg = await readErrorText(res);
+          throw new Error(msg);
+        }
+
+        await fetchFoods(restaurantId);
+        resetForm();
+      }
+    } catch (err) {
+      console.error("SAVE ERROR:", err);
+      alert(`Save failed: ${err.message}`);
+    }
+  };
+
+  // ✅ DELETE (API)
+  const deleteFood = async (id) => {
+    if (!window.confirm("Delete this food item?")) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/fooditems/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const msg = await readErrorText(res);
+        throw new Error(msg);
+      }
+
+      await fetchFoods(restaurantId);
+    } catch (err) {
+      console.error("DELETE ERROR:", err);
+      alert(`Delete failed: ${err.message}`);
+    }
+  };
+
+  // -----------------------------
+  // UI
+  // -----------------------------
   return (
     <div className="food-menu">
       <div className="food-header">
         <h1>🍽 Food Menu Management</h1>
-        <button
-          className="primary-btn"
-          onClick={() => {
-            resetForm();
-            setShowModal(true);
-          }}
-        >
+        <button className="primary-btn" onClick={openAddModal}>
           + Add Food Item
         </button>
       </div>
 
-      {/* FOOD LIST */}
+      {!restaurantId && (
+        <p style={{ marginTop: 10 }}>
+          RestaurantId not found. Please login again.
+        </p>
+      )}
+
+      {loading && <p style={{ marginTop: 10 }}>Loading food items...</p>}
+
       <div className="menu-card">
         <table className="food-table">
           <thead>
@@ -139,10 +295,11 @@ export default function FoodMenu() {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {foods.map((food) => (
               <tr key={food.id}>
-                <td>{food.category}</td>
+                <td>{food.category || "General"}</td>
                 <td>{food.name}</td>
                 <td>{food.price}</td>
                 <td>
@@ -160,6 +317,14 @@ export default function FoodMenu() {
                 </td>
               </tr>
             ))}
+
+            {!loading && foods.length === 0 && restaurantId !== 0 && (
+              <tr>
+                <td colSpan={5} style={{ textAlign: "center", padding: 16 }}>
+                  No food items found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -168,7 +333,9 @@ export default function FoodMenu() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-box large">
-            <button className="close-btn" onClick={resetForm}>✖</button>
+            <button className="close-btn" onClick={resetForm}>
+              ✖
+            </button>
 
             <h2>{editId ? "Update Food Item" : "Add Food Item"}</h2>
 
@@ -177,7 +344,9 @@ export default function FoodMenu() {
               <select name="category" value={form.category} onChange={handleChange}>
                 <option value="">Select Category</option>
                 {categories.map((c, i) => (
-                  <option key={i}>{c}</option>
+                  <option key={i} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
             </div>
@@ -189,48 +358,12 @@ export default function FoodMenu() {
 
             <div className="form-group">
               <label>Price (₹) *</label>
-              <input type="number" name="price" value={form.price} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label>Ingredients</label>
-              <input name="ingredients" value={form.ingredients} onChange={handleChange} />
-            </div>
-
-            {/* NUTRITION */}
-            <div className="nutrition">
-              <input placeholder="Calories" name="calories" value={form.calories} onChange={handleChange} />
-              <input placeholder="Carbs (g)" name="carbs" value={form.carbs} onChange={handleChange} />
-              <input placeholder="Protein (g)" name="protein" value={form.protein} onChange={handleChange} />
-              <input placeholder="Fat (g)" name="fat" value={form.fat} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label>Food Type</label>
-              <select name="type" value={form.type} onChange={handleChange}>
-                <option>Veg</option>
-                <option>Non-Veg</option>
-                <option>Vegan</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Spice Level</label>
-              <select name="spice" value={form.spice} onChange={handleChange}>
-                <option>Mild</option>
-                <option>Medium</option>
-                <option>Spicy</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Image URL</label>
-              <input name="image" value={form.image} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label>Description</label>
-              <textarea name="description" value={form.description} onChange={handleChange} />
+              <input
+                type="number"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="checkbox">

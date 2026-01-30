@@ -42,12 +42,12 @@ export default function Sidebar() {
 
       {/* Menu */}
       <ul className="sidebar-menu">
-        <li><Link to="/manager">🏠 {!collapsed && "Dashboard"}</Link></li>
-        <li><Link to="/manager/restaurant">🏪 {!collapsed && "My Restaurant"}</Link></li>
+        {/* <li><Link to="/manager">🏠 {!collapsed && "Dashboard"}</Link></li> */}
+        <li><Link to="/manager/bookings">📅 {!collapsed && "Dashboard / Bookings"}</Link></li>
+        {/* <li><Link to="/manager/restaurant">🏪 {!collapsed && "My Restaurant"}</Link></li> */}
         <li><Link to="/manager/food">🍔 {!collapsed && "Food Menu"}</Link></li>
         <li><Link to="/manager/tables">🪑 {!collapsed && "Tables"}</Link></li>
-        <li><Link to="/manager/bookings">📅 {!collapsed && "Bookings"}</Link></li>
-        <li><Link to="/manager/payments">💳 {!collapsed && "Payments"}</Link></li>
+        {/* <li><Link to="/manager/payments">💳 {!collapsed && "Payments"}</Link></li> */}
       </ul>
     </div>
   );

@@ -1,13 +1,14 @@
 ﻿using Hotel.Models;
 using MenuPro.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MenuPro.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize(Roles = "Manager")] // enable if you have auth + roles
     public class ManagerSummaryController : ControllerBase
     {
         private readonly AppDbContext _db;
@@ -17,14 +18,36 @@ namespace MenuPro.Controllers
             _db = db;
         }
 
-        /// <summary>
-        /// Dashboard summary for a restaurant manager.
-        /// </summary>
-        /// <param name="restaurantId">Restaurant Id</param>
+        // ===== DTOs used only by this controller =====
+
+        public class ManagerBookingWithMenuDto
+        {
+            public int BookingId { get; set; }
+            public DateTime BookingDate { get; set; }
+
+            public string CustomerName { get; set; } = "";
+            public string CustomerPhone { get; set; } = "";
+
+            public string Time { get; set; } = "";     // "16:00 - 18:00"
+            public string TableNo { get; set; } = "";  // TableNumber
+
+            public string Status { get; set; } = "";   // BookingStatus
+            public string Payment { get; set; } = "";  // PaymentStatus
+
+            public List<BookingFoodItemDto> FoodItems { get; set; } = new();
+        }
+
+        public class UpdateBookingStatusDto
+        {
+            public string Status { get; set; } = "";
+        }
+
+        // ===== GET SUMMARY =====
+        // GET: /api/managersummary/{restaurantId}
         [HttpGet("{restaurantId:int}")]
         public async Task<ActionResult<ManagerSummaryDto>> GetSummary(int restaurantId)
         {
-            // Restaurant basic info
+            // ---------- Restaurant ----------
             var restaurant = await _db.Restaurants
                 .AsNoTracking()
                 .Where(r => r.RestaurantId == restaurantId && r.IsActive)
@@ -34,12 +57,11 @@ namespace MenuPro.Controllers
                     r.Name,
                     r.City,
                     r.Location,
-                    r.Rating,
                     r.TotalRatings,
                     r.PriceForTwo,
-                    r.OpenTime,
-                    r.CloseTime,
-                    r.ImagePath
+                    r.OpenTime,    // string?
+                    r.CloseTime,   // string?
+                    r.ImagePath    // string?
                 })
                 .FirstOrDefaultAsync();
 
@@ -49,7 +71,7 @@ namespace MenuPro.Controllers
             var today = DateTime.UtcNow.Date;
             var monthStart = new DateTime(today.Year, today.Month, 1);
 
-            // Food counts
+            // ---------- Food counts ----------
             var foodTotals = await _db.FoodItems
                 .AsNoTracking()
                 .Where(f => f.RestaurantId == restaurantId)
@@ -60,35 +82,36 @@ namespace MenuPro.Controllers
                     Available = g.Count(x => x.IsAvailable),
                     OutOfStock = g.Count(x => !x.IsAvailable)
                 })
-                .FirstOrDefaultAsync() ?? new { Total = 0, Available = 0, OutOfStock = 0 };
+                .FirstOrDefaultAsync()
+                ?? new { Total = 0, Available = 0, OutOfStock = 0 };
 
-            // Table counts
-            // (Assuming Table has Status string: "Available", "Booked", etc.)
-            var tables = await _db.Tables
+            // ---------- Table counts ----------
+            var tableStatuses = await _db.Tables
                 .AsNoTracking()
                 .Where(t => t.RestaurantId == restaurantId)
                 .Select(t => t.Status)
                 .ToListAsync();
 
-            int totalTables = tables.Count;
-            int availableTables = tables.Count(s => (s ?? "").ToLower() == "available");
-            int bookedTables = tables.Count(s => (s ?? "").ToLower() == "booked");
+            int totalTables = tableStatuses.Count;
+            int availableTables = tableStatuses.Count(s => (s ?? "").ToLower() == "available");
+            int bookedTables = tableStatuses.Count(s => (s ?? "").ToLower() == "booked");
             int otherTables = totalTables - availableTables - bookedTables;
 
-            // Bookings today + upcoming
-            // (Assuming Booking has BookingDate DateTime and BookingStatus string)
+            // ---------- Bookings ----------
             var todayBookingsCount = await _db.Bookings
                 .AsNoTracking()
-                .Where(b => b.RestaurantId == restaurantId && b.BookingDate >= today && b.BookingDate < today.AddDays(1))
+                .Where(b => b.RestaurantId == restaurantId &&
+                            b.BookingDate >= today &&
+                            b.BookingDate < today.AddDays(1))
                 .CountAsync();
 
             var upcomingBookingsCount = await _db.Bookings
                 .AsNoTracking()
-                .Where(b => b.RestaurantId == restaurantId && b.BookingDate >= DateTime.UtcNow)
+                .Where(b => b.RestaurantId == restaurantId &&
+                            b.BookingDate >= DateTime.UtcNow)
                 .CountAsync();
 
-            // Revenue today + month-to-date (from payments)
-            // (Assuming Payment has Amount decimal and PaymentDate DateTime, PaymentStatus string)
+            // ---------- Revenue (FIXED EF QUERY) ----------
             var revenueToday = await _db.Payments
                 .AsNoTracking()
                 .Where(p =>
@@ -111,19 +134,64 @@ namespace MenuPro.Controllers
                 )
                 .SumAsync(p => (decimal?)p.Amount) ?? 0m;
 
-            // Build response
+            // ---------- Recent bookings + menu ----------
+            var recentBookings = await _db.Bookings
+                .AsNoTracking()
+                .Where(b => b.RestaurantId == restaurantId)
+                .Include(b => b.User)
+                .Include(b => b.Table)
+                .Include(b => b.TimeSlot)
+                .Include(b => b.Payments)
+                .Include(b => b.BookingFoods)
+                    .ThenInclude(bf => bf.FoodItem)
+                .OrderByDescending(b => b.BookingDate)
+                .Take(20)
+                .Select(b => new ManagerBookingWithMenuDto
+                {
+                    BookingId = b.BookingId,
+                    BookingDate = b.BookingDate,
+
+                    CustomerName = b.User != null ? (b.User.Name ?? "Customer") : "Customer",
+                    CustomerPhone = b.User != null ? (b.User.Phone ?? "") : "",
+
+                    Time = b.TimeSlot != null
+                        ? $"{b.TimeSlot.StartTime} - {b.TimeSlot.EndTime}"
+                        : "",
+
+                    TableNo = b.Table != null ? b.Table.TableNumber.ToString() : "",
+
+                    Status = b.BookingStatus,
+
+                    Payment = b.Payments
+                        .OrderByDescending(p => p.PaymentDate)
+                        .Select(p => p.PaymentStatus)
+                        .FirstOrDefault() ?? "Unpaid",
+
+                    FoodItems = b.BookingFoods
+                        .Select(bf => new BookingFoodItemDto
+                        {
+                            FoodItemId = bf.FoodItemId,
+                            Name = bf.FoodItem != null ? bf.FoodItem.FoodName : "",
+                            Quantity = bf.Quantity,
+                            Price = bf.Price
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            // ---------- Build DTO ----------
             var dto = new ManagerSummaryDto
             {
                 RestaurantId = restaurant.RestaurantId,
                 RestaurantName = restaurant.Name,
-                City = restaurant.City,
+                City = restaurant.City ?? "",
                 Location = restaurant.Location,
-               // Rating = restaurant.Rating,
                 TotalRatings = restaurant.TotalRatings,
+
                 PriceForTwo = restaurant.PriceForTwo,
-                OpenTime = restaurant.OpenTime,
-                CloseTime = restaurant.CloseTime,
-                ImagePath = restaurant.ImagePath,
+                OpenTime = restaurant.OpenTime ?? "",
+                CloseTime = restaurant.CloseTime ?? "",
+                ImagePath = restaurant.ImagePath ?? "",
 
                 TotalFoodItems = foodTotals.Total,
                 AvailableFoodItems = foodTotals.Available,
@@ -139,32 +207,32 @@ namespace MenuPro.Controllers
 
                 RevenueToday = revenueToday,
                 RevenueMonthToDate = revenueMonth,
-                GeneratedAtUtc = DateTime.UtcNow
+                GeneratedAtUtc = DateTime.UtcNow,
+
+                RecentBookings = recentBookings
             };
 
             return Ok(dto);
         }
 
-        // OPTIONAL: if manager login has restaurantId, you can provide:
-        // GET api/managersummary/me
-        // This needs JWT claim or DB lookup by UserId.
-        /*
-        [HttpGet("me")]
-        [Authorize(Roles = "Manager")]
-        public async Task<ActionResult<ManagerSummaryDto>> GetMySummary()
+        // ===== UPDATE BOOKING STATUS =====
+        // PUT: /api/managersummary/bookings/{bookingId}/status
+        [HttpPut("bookings/{bookingId:int}/status")]
+        public async Task<IActionResult> UpdateBookingStatus(
+            int bookingId,
+            [FromBody] UpdateBookingStatusDto dto)
         {
-            int restaurantId = await ResolveRestaurantIdForManager();
-            return await GetSummary(restaurantId);
-        }
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Status))
+                return BadRequest("Status is required.");
 
-        private async Task<int> ResolveRestaurantIdForManager()
-        {
-            // Example if you store userId in claims:
-            // var userId = int.Parse(User.FindFirst("userId")!.Value);
-            // var user = await _db.Users.AsNoTracking().FirstAsync(u => u.UserId == userId);
-            // return user.RestaurantId ?? throw new Exception("Manager has no restaurant mapped.");
+            var booking = await _db.Bookings.FirstOrDefaultAsync(b => b.BookingId == bookingId);
+            if (booking == null)
+                return NotFound("Booking not found.");
 
-            throw new NotImplementedException("Implement based on your auth/user model.");
+            booking.BookingStatus = dto.Status.Trim();
+            await _db.SaveChangesAsync();
+
+            return NoContent();
         }
         */
     }

@@ -21,7 +21,7 @@ namespace Hotel.Controllers
 
         // ✅ GET: api/fooditems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FoodItem>>> GetAllFoodItems()
+        public async Task<ActionResult<IEnumerable<Models.FoodItem>>> GetAllFoodItems()
         {
             var foods = await _context.FoodItems
                 .AsNoTracking()
@@ -33,7 +33,7 @@ namespace Hotel.Controllers
 
         // ✅ GET: api/fooditems/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<FoodItem>> GetFoodItemById(int id)
+        public async Task<ActionResult<Models.FoodItem>> GetFoodItemById(int id)
         {
             var food = await _context.FoodItems
                 .AsNoTracking()
@@ -45,7 +45,7 @@ namespace Hotel.Controllers
 
         // ✅ GET: api/fooditems/restaurant/3
         [HttpGet("restaurant/{restaurantId:int}")]
-        public async Task<ActionResult<IEnumerable<FoodItem>>> GetFoodItemsByRestaurant(int restaurantId)
+        public async Task<ActionResult<IEnumerable<Models.FoodItem>>> GetFoodItemsByRestaurant(int restaurantId)
         {
             var foods = await _context.FoodItems
                 .AsNoTracking()
@@ -58,7 +58,7 @@ namespace Hotel.Controllers
 
         // ✅ POST: api/fooditems
         [HttpPost]
-        public async Task<ActionResult<FoodItem>> CreateFoodItem([FromBody] FoodItemCreateDto dto)
+        public async Task<ActionResult<Models.FoodItem>> CreateFoodItem([FromBody] FoodItemCreateDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FoodName))
                 return BadRequest("FoodName is required.");
@@ -74,7 +74,7 @@ namespace Hotel.Controllers
             if (!restaurantExists)
                 return BadRequest($"Restaurant {dto.RestaurantId} not found or inactive.");
 
-            var food = new FoodItem
+            var food = new Models.FoodItem
             {
                 RestaurantId = dto.RestaurantId,
                 FoodName = dto.FoodName.Trim(),
