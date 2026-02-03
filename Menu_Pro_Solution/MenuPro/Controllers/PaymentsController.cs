@@ -32,9 +32,10 @@ namespace Hotel.Controllers
             {
                 BookingId = dto.BookingId,
                 Amount = dto.Amount,
-                PaymentType = dto.PaymentType,     // ✅ use PaymentType (not paymentMethod)
+                PaymentType = dto.PaymentType,     
                 PaymentStatus = "Success",
                 PaymentDate = DateTime.UtcNow
+
             };
 
             _context.Payments.Add(payment);
