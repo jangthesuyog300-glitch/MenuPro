@@ -34,6 +34,7 @@ namespace Hotel.Controllers
                 .ToListAsync();
 
             return Ok(managers);
+
         }
 
         // ✅ CREATE MANAGER
@@ -54,7 +55,6 @@ namespace Hotel.Controllers
             var restaurantExists = await _context.Restaurants.AnyAsync(r => r.RestaurantId == dto.RestaurantId);
             if (!restaurantExists) return BadRequest("Restaurant not found");
 
-            // Email unique?
             var emailExists = await _context.Users.AnyAsync(u => u.Email.ToLower() == email);
             if (emailExists) return BadRequest("Email already exists");
 
