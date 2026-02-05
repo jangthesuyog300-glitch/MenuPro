@@ -51,7 +51,7 @@ namespace Hotel.Controllers
 
                     bookingAmount = b.BookingAmount,
 
-                    // ✅ FIXED: EF-safe sum
+                    
                     paidAmount = b.Payments
                         .Where(p => p.PaymentStatus == "Success" || p.PaymentStatus == "Paid")
                         .Sum(p => (decimal?)p.Amount) ?? 0m,
